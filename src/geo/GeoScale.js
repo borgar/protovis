@@ -98,7 +98,7 @@ pv.Geo.scale = function(p) {
       var lat, lng;
       if (d.length > 1) {
         var s = pv.Scale.linear();
-        if (m == undefined) m = 10;
+        if (m == null) m = 10;
         lat = s.domain(d, function(d) { return d.lat; }).ticks(m);
         lng = s.domain(d, function(d) { return d.lng; }).ticks(m);
       } else {

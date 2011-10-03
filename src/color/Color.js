@@ -34,29 +34,26 @@ pv.color = function(format) {
     var m2 = m1[2].split(","), a = 1;
     switch (m1[1]) {
       case "hsla":
-      case "rgba": {
+      case "rgba":
         a = parseFloat(m2[3]);
         if (!a) return pv.Color.transparent;
         break;
-      }
     }
     switch (m1[1]) {
       case "hsla":
-      case "hsl": {
+      case "hsl":
         var h = parseFloat(m2[0]), // degrees
             s = parseFloat(m2[1]) / 100, // percentage
             l = parseFloat(m2[2]) / 100; // percentage
         return (new pv.Color.Hsl(h, s, l, a)).rgb();
-      }
       case "rgba":
-      case "rgb": {
-        function parse(c) { // either integer or percentage
+      case "rgb":
+        var parse = function (c) { // either integer or percentage
           var f = parseFloat(c);
           return (c[c.length - 1] == '%') ? Math.round(f * 2.55) : f;
-        }
+        };
         var r = parse(m2[0]), g = parse(m2[1]), b = parse(m2[2]);
         return pv.rgb(r, g, b, a);
-      }
     }
   }
 
@@ -417,7 +414,7 @@ pv.Color.Hsl.prototype.rgb = function() {
   l = Math.max(0, Math.min(l, 1));
 
   /* From FvD 13.37, CSS Color Module Level 3 */
-  var m2 = (l <= .5) ? (l * (1 + s)) : (l + s - l * s);
+  var m2 = (l <= 0.5) ? (l * (1 + s)) : (l + s - l * s);
   var m1 = 2 * l - m2;
   function v(h) {
     if (h > 360) h -= 360;

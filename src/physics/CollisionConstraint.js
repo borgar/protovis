@@ -51,8 +51,8 @@ pv.Constraint.collision = function(radius) {
   /** @private */
   function constrain(n, p, x1, y1, x2, y2) {
     if (!n.leaf) {
-      var sx = (x1 + x2) * .5,
-          sy = (y1 + y2) * .5,
+      var sx = (x1 + x2) * 0.5,
+          sy = (y1 + y2) * 0.5,
           top = sy > py1,
           bottom = sy < py2,
           left = sx > px1,
@@ -72,7 +72,7 @@ pv.Constraint.collision = function(radius) {
           l = Math.sqrt(dx * dx + dy * dy),
           d = r1 + radius(n.p);
       if (l < d) {
-        var k = (l - d) / l * .5;
+        var k = (l - d) / l * 0.5;
         dx *= k;
         dy *= k;
         p.x -= dx;

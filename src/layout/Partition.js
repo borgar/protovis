@@ -133,9 +133,13 @@ pv.Layout.Partition.prototype.buildImplied = function(s) {
   stack.unshift(null);
   root.visitAfter(function(n, i) {
       if (i > maxDepth) maxDepth = i;
-      n.size = n.firstChild
-          ? pv.sum(n.childNodes, function(n) { return n.size; })
-          : that.$size.apply(that, (stack[0] = n, stack));
+      if ( n.firstChild ) {
+        n.size = pv.sum(n.childNodes, function(n) { return n.size; });
+      }
+      else {
+        stack[0] = n;
+        n.size = that.$size.apply(that, stack);
+      }
     });
   stack.shift();
 
@@ -148,7 +152,7 @@ pv.Layout.Partition.prototype.buildImplied = function(s) {
   /* Compute the unit breadth and depth of each node. */
   var ds = 1 / maxDepth;
   root.minBreadth = 0;
-  root.breadth = .5;
+  root.breadth = 0.5;
   root.maxBreadth = 1;
   root.visitBefore(function(n) {
     var b = n.minBreadth, s = n.maxBreadth - b;

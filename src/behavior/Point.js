@@ -110,7 +110,7 @@ pv.Behavior.point = function(r) {
     }
 
     /* Point the new target, if there is one. */
-    if (unpoint = point) {
+    if ( (unpoint = point) ) {
       pv.Mark.dispatch("point", point.scene, point.index);
 
       /* Unpoint when the mouse leaves the root panel. */

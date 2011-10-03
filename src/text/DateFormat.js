@@ -104,10 +104,9 @@ pv.Format.date = function(pattern) {
                     + "/" + pad("0", 2, d.getFullYear() % 100);
           case '%e': return pad(" ", 2, d.getDate());
           case '%H': return pad("0", 2, d.getHours());
-          case '%I': {
-            var h = d.getHours() % 12;
-            return h ? pad("0", 2, h) : 12;
-          }
+          case '%I':
+            var t = d.getHours() % 12;
+            return t ? pad("0", 2, t) : 12;
           // TODO %j: day of year as a decimal number [001,366]
           case '%m': return pad("0", 2, d.getMonth() + 1);
           case '%M': return pad("0", 2, d.getMinutes());
@@ -115,21 +114,19 @@ pv.Format.date = function(pattern) {
           case '%p': return d.getHours() < 12 ? "AM" : "PM";
           case '%T':
           case '%X':
-          case '%r': {
+          case '%r':
             var h = d.getHours() % 12;
             return (h ? pad("0", 2, h) : 12)
                     + ":" + pad("0", 2, d.getMinutes())
                     + ":" + pad("0", 2, d.getSeconds())
                     + " " + (d.getHours() < 12 ? "AM" : "PM");
-          }
           case '%R': return pad("0", 2, d.getHours()) + ":" + pad("0", 2, d.getMinutes());
           case '%S': return pad("0", 2, d.getSeconds());
           case '%Q': return pad("0", 3, d.getMilliseconds());
           case '%t': return "\t";
-          case '%u': {
+          case '%u':
             var w = d.getDay();
             return w ? w : 1;
-          }
           // TODO %U: week number (sunday first day) [00,53]
           // TODO %V: week number (monday first day) [01,53] ... with weirdness
           case '%w': return d.getDay();
@@ -170,47 +167,41 @@ pv.Format.date = function(pattern) {
         switch (s) {
           // TODO %a: day of week, either abbreviated or full name
           // TODO %A: same as %a
-          case '%b': {
+          case '%b':
             fields.push(function(x) { month = {
                   Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7,
                   Sep: 8, Oct: 9, Nov: 10, Dec: 11
                 }[x]; });
             return "([A-Za-z]+)";
-          }
           case '%h':
-          case '%B': {
+          case '%B':
             fields.push(function(x) { month = {
                   January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
                   July: 6, August: 7, September: 8, October: 9, November: 10,
                   December: 11
                 }[x]; });
             return "([A-Za-z]+)";
-          }
           // TODO %c: locale's appropriate date and time
           // TODO %C: century number[0,99]
           case '%e':
-          case '%d': {
+          case '%d':
             fields.push(function(x) { date = x; });
             return "([0-9]+)";
-          }
           // TODO %D: same as %m/%d/%y
           case '%I':
-          case '%H': {
+          case '%H':
             fields.push(function(x) { hour = x; });
             return "([0-9]+)";
-          }
           // TODO %j: day number [1,366]
-          case '%m': {
+          case '%m':
             fields.push(function(x) { month = x - 1; });
             return "([0-9]+)";
-          }
-          case '%M': {
+          case '%M':
             fields.push(function(x) { minute = x; });
             return "([0-9]+)";
-          }
           // TODO %n: any white space
           // TODO %p: locale's equivalent of a.m. or p.m.
-          case '%p': { // TODO this is a hack
+          case '%p': // TODO this is a hack
             fields.push(function(x) {
               if (hour == 12) {
                 if (x == "am") hour = 0;
@@ -219,13 +210,11 @@ pv.Format.date = function(pattern) {
               }
             });
             return "(am|pm)";
-          }
           // TODO %r: %I:%M:%S %p
           // TODO %R: %H:%M
-          case '%S': {
+          case '%S':
             fields.push(function(x) { second = x; });
             return "([0-9]+)";
-          }
           // TODO %t: any white space
           // TODO %T: %H:%M:%S
           // TODO %U: week number [00,53]
@@ -233,22 +222,19 @@ pv.Format.date = function(pattern) {
           // TODO %W: week number [00, 53]
           // TODO %x: locale date (%m/%d/%y)
           // TODO %X: locale time (%I:%M:%S %p)
-          case '%y': {
+          case '%y':
             fields.push(function(x) {
                 x = Number(x);
                 year = x + (((0 <= x) && (x < 69)) ? 2000
                     : (((x >= 69) && (x < 100) ? 1900 : 0)));
               });
             return "([0-9]+)";
-          }
-          case '%Y': {
+          case '%Y':
             fields.push(function(x) { year = x; });
             return "([0-9]+)";
-          }
-          case '%%': {
+          case '%%':
             fields.push(function() {});
             return "%";
-          }
         }
         return s;
       });

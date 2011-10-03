@@ -206,13 +206,13 @@ pv.Layout.Force.prototype = pv.extend(pv.Layout.Network)
  */
 pv.Layout.Force.prototype.defaults = new pv.Layout.Force()
     .extend(pv.Layout.Network.prototype.defaults)
-    .dragConstant(.1)
+    .dragConstant(0.1)
     .chargeConstant(-40)
     .chargeMinDistance(2)
     .chargeMaxDistance(500)
-    .chargeTheta(.9)
-    .springConstant(.1)
-    .springDamping(.3)
+    .chargeTheta(0.9)
+    .springConstant(0.1)
+    .springDamping(0.3)
     .springLength(20);
 
 /** @private Initialize the physics simulation. */

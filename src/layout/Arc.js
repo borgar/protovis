@@ -115,7 +115,7 @@ pv.Layout.Arc.prototype.buildImplied = function(s) {
       case "bottom": return Math.PI / 2;
       case "left": return Math.PI;
       case "right": return 0;
-      case "radial": return (b - .25) * 2 * Math.PI;
+      case "radial": return (b - 0.25) * 2 * Math.PI;
     }
   }
 
@@ -143,7 +143,7 @@ pv.Layout.Arc.prototype.buildImplied = function(s) {
 
   /* Populate the x, y and mid-angle attributes. */
   for (var i = 0; i < nodes.length; i++) {
-    var n = nodes[index[i]], b = n.breadth = (i + .5) / nodes.length;
+    var n = nodes[index[i]], b = n.breadth = (i + 0.5) / nodes.length;
     n.x = x(b);
     n.y = y(b);
     n.midAngle = midAngle(b);

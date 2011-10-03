@@ -155,11 +155,11 @@ pv.Nest.prototype.map = function() {
   var map = {}, values = [];
 
   /* Build the map. */
-  for (var i, j = 0; j < this.array.length; j++) {
+  for (var k, i, j = 0; j < this.array.length; j++) {
     var x = this.array[j];
     var m = map;
     for (i = 0; i < this.keys.length - 1; i++) {
-      var k = this.keys[i](x);
+      k = this.keys[i](x);
       if (!m[k]) m[k] = {};
       m = m[k];
     }
@@ -203,7 +203,7 @@ pv.Nest.prototype.entries = function() {
     for (var k in map) {
       var v = map[k];
       array.push({ key: k, values: (v instanceof Array) ? v : entries(v) });
-    };
+    }
     return array;
   }
 

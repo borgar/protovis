@@ -143,7 +143,7 @@ pv.Line.prototype.defaults = new pv.Line()
     .strokeStyle(pv.Colors.category10().by(pv.parent))
     .interpolate("linear")
     .eccentricity(0)
-    .tension(.7);
+    .tension(0.7);
 
 /** @private Reuse Area's implementation for segmented bind & build. */
 pv.Line.prototype.bind = pv.Area.prototype.bind;

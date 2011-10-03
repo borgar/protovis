@@ -61,7 +61,7 @@ pv.Layout.Tree.prototype.buildImplied = function(s) {
   function firstWalk(v) {
     var l, r, a;
     if (!v.firstChild) {
-      if (l = v.previousSibling) {
+      if ( (l = v.previousSibling) ) {
         v.prelim = l.prelim + distance(v.depth, true);
       }
     } else {
@@ -73,8 +73,8 @@ pv.Layout.Tree.prototype.buildImplied = function(s) {
         a = apportion(c, a);
       }
       executeShifts(v);
-      var midpoint = .5 * (l.prelim + r.prelim);
-      if (l = v.previousSibling) {
+      var midpoint = 0.5 * (l.prelim + r.prelim);
+      if ( (l = v.previousSibling) ) {
         v.prelim = l.prelim + distance(v.depth, true);
         v.mod = v.prelim - midpoint;
       } else {

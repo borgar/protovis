@@ -40,7 +40,7 @@ try {
  */
   pv.parse = function(js) { // hacky regex support
     var re = new RegExp("function\\s*(\\b\\w+)?\\s*\\([^)]*\\)\\s*", "mg"), m, d, i = 0, s = "";
-    while (m = re.exec(js)) {
+    while ( (m = re.exec(js)) ) {
       var j = m.index + m[0].length;
       if (js.charAt(j) != '{') {
         s += js.substring(i, j) + "{return ";
@@ -48,16 +48,15 @@ try {
         for (var p = 0; p >= 0 && j < js.length; j++) {
           var c = js.charAt(j);
           switch (c) {
-            case '"': case '\'': {
+            case '"': case '\'':
               while (++j < js.length && (d = js.charAt(j)) != c) {
                 if (d == '\\') j++;
               }
               break;
-            }
             case '[': case '(': p++; break;
             case ']': case ')': p--; break;
             case ';':
-            case ',': if (p == 0) p--; break;
+            case ',': if (p === 0) p--; break;
           }
         }
         s += pv.parse(js.substring(i, --j)) + ";}";
@@ -91,7 +90,12 @@ pv.css = function(e, p) {
  * @param e the exception that triggered the error.
  */
 pv.error = function(e) {
-  (typeof console == "undefined") ? alert(e) : console.error(e);
+  if (typeof console == "undefined") {
+    alert(e);
+  } 
+  else {
+    console.error(e);
+  }
 };
 
 /**

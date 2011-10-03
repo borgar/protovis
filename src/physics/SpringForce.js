@@ -22,13 +22,13 @@
  * @see #links
  */
 pv.Force.spring = function(k) {
-  var d = .1, // default damping factor
+  var d = 0.1, // default damping factor
       l = 20, // default rest length
       links, // links on which to apply spring forces
       kl, // per-spring normalization
       force = {};
 
-  if (!arguments.length) k = .1; // default spring constant (tension)
+  if (!arguments.length) k = 0.1; // default spring constant (tension)
 
   /**
    * Sets or gets the links associated with this spring force. Unlike other
@@ -128,8 +128,8 @@ pv.Force.spring = function(k) {
           ks = k * kl[i], // normalized tension
           kd = d * kl[i], // normalized damping
           kk = (ks * (dn - l) + kd * (dx * (a.vx - b.vx) + dy * (a.vy - b.vy)) * dd) * dd,
-          fx = -kk * (dn ? dx : (.01 * (.5 - Math.random()))),
-          fy = -kk * (dn ? dy : (.01 * (.5 - Math.random())));
+          fx = -kk * (dn ? dx : (0.01 * (0.5 - Math.random()))),
+          fy = -kk * (dn ? dy : (0.01 * (0.5 - Math.random())));
       a.fx += fx;
       a.fy += fy;
       b.fx -= fx;

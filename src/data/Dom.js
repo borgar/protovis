@@ -320,9 +320,13 @@ pv.Dom.Node.prototype.sort = function(f) {
 pv.Dom.Node.prototype.reverse = function() {
   var childNodes = [];
   this.visitAfter(function(n) {
-      while (n.lastChild) childNodes.push(n.removeChild(n.lastChild));
-      for (var c; c = childNodes.pop();) n.insertBefore(c, n.firstChild);
-    });
+    while (n.lastChild) {
+      childNodes.push(n.removeChild(n.lastChild));
+    }
+    for (var c=0,cl=childNodes.length; c<cl; c++) {
+      n.insertBefore(childNodes[c], n.firstChild);
+    }
+  });
   return this;
 };
 
@@ -351,16 +355,23 @@ pv.Dom.Node.prototype.nodes = function() {
  * @param {boolean} [recursive] whether the toggle should apply to descendants.
  */
 pv.Dom.Node.prototype.toggle = function(recursive) {
-  if (recursive) return this.toggled
+  var n = this;
+  if (recursive) {
+    return this.toggled
       ? this.visitBefore(function(n) { if (n.toggled) n.toggle(); })
       : this.visitAfter(function(n) { if (!n.toggled) n.toggle(); });
-  var n = this;
+  }
   if (n.toggled) {
-    for (var c; c = n.toggled.pop();) n.appendChild(c);
+    for (var c=0,cl=n.toggled.length; c<cl; c++) {
+      n.appendChild(n.toggled[c]);
+    }
     delete n.toggled;
-  } else if (n.lastChild) {
+  }
+  else if (n.lastChild) {
     n.toggled = [];
-    while (n.lastChild) n.toggled.push(n.removeChild(n.lastChild));
+    while (n.lastChild) {
+      n.toggled.push(n.removeChild(n.lastChild));
+    }
   }
 };
 

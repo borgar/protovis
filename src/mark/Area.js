@@ -145,7 +145,7 @@ pv.Area.prototype.defaults = new pv.Area()
     .lineWidth(1.5)
     .fillStyle(pv.Colors.category20().by(pv.parent))
     .interpolate("linear")
-    .tension(.7);
+    .tension(0.7);
 
 /** @private Sets width and height to zero if null. */
 pv.Area.prototype.buildImplied = function(s) {
@@ -208,9 +208,14 @@ pv.Area.prototype.buildInstance = function(s) {
     /* Determine which properties are fixed. */
     if (!fixed) {
       fixed = binds.fixed = [];
-      function f(p) { return !p.fixed || (fixed.push(p), false); }
+      var f = function (p) {
+        p.fixed && fixed.push(p);
+        return !p.fixed || false;
+      };
       binds.required = binds.required.filter(f);
-      if (!this.scene[0].segmented) binds.optional = binds.optional.filter(f);
+      if (!this.scene[0].segmented) {
+        binds.optional = binds.optional.filter(f);
+      }
     }
 
     /* Copy fixed property values from the first instance. */

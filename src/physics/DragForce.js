@@ -14,7 +14,7 @@
 pv.Force.drag = function(k) {
   var force = {};
 
-  if (!arguments.length) k = .1; // default drag constant
+  if (!arguments.length) k = 0.1; // default drag constant
 
   /**
    * Sets or gets the drag constant, in the range [0,1]. The default drag

@@ -51,8 +51,8 @@ pv.Scale.interpolator = function(start, end) {
   return function(t) {
     var a = start.a * (1 - t) + end.a * t;
     if (a < 1e-5) a = 0; // avoid scientific notation
-    return (start.a == 0) ? pv.rgb(end.r, end.g, end.b, a)
-        : ((end.a == 0) ? pv.rgb(start.r, start.g, start.b, a)
+    return (start.a === 0) ? pv.rgb(end.r, end.g, end.b, a)
+        : ((end.a === 0) ? pv.rgb(start.r, start.g, start.b, a)
         : pv.rgb(
             Math.round(start.r * (1 - t) + end.r * t),
             Math.round(start.g * (1 - t) + end.g * t),

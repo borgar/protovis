@@ -80,8 +80,8 @@ pv.Scale.log = function() {
       for (; i < j; i++) for (var k = 1; k < b; k++) ticks.push(pow(i) * k);
       ticks.push(pow(i));
     }
-    for (i = 0; ticks[i] < d[0]; i++); // strip small values
-    for (j = ticks.length; ticks[j - 1] > d[1]; j--); // strip big values
+    for (i = 0; ticks[i] < d[0]; i++) {} // strip small values
+    for (j = ticks.length; ticks[j - 1] > d[1]; j--) {} // strip big values
     return ticks.slice(i, j);
   };
 

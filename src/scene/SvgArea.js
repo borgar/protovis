@@ -24,16 +24,14 @@ pv.SvgScene.area = function(scenes) {
       if (i < k) {
         var sk = scenes[i + 1], sl = scenes[j - 1];
         switch (s.interpolate) {
-          case "step-before": {
+          case "step-before":
             pi += "V" + sk.top;
             pj += "H" + (sl.left + sl.width);
             break;
-          }
-          case "step-after": {
+          case "step-after":
             pi += "H" + sk.left;
             pj += "V" + (sl.top + sl.height);
             break;
-          }
         }
       }
 

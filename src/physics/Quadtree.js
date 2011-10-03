@@ -52,7 +52,7 @@ pv.Quadtree = function(particles) {
          * internal node while adding the new particle to a child node. This
          * avoids infinite recursion.
          */
-        if ((Math.abs(n.p.x - p.x) + Math.abs(n.p.y - p.y)) < .01) {
+        if ((Math.abs(n.p.x - p.x) + Math.abs(n.p.y - p.y)) < 0.01) {
           insertChild(n, p, x1, y1, x2, y2);
         } else {
           var v = n.p;
@@ -75,8 +75,8 @@ pv.Quadtree = function(particles) {
    */
   function insertChild(n, p, x1, y1, x2, y2) {
     /* Compute the split point, and the quadrant in which to insert p. */
-    var sx = (x1 + x2) * .5,
-        sy = (y1 + y2) * .5,
+    var sx = (x1 + x2) * 0.5,
+        sy = (y1 + y2) * 0.5,
         right = p.x >= sx,
         bottom = p.y >= sy;
 

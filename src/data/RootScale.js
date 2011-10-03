@@ -40,11 +40,13 @@ pv.Scale.root = function() {
    * @returns {pv.Scale.root} <tt>this</tt>, or the current base.
    */
   scale.power = function(v) {
+    var b = Number(v||0),
+        p = 1 / b;
     if (arguments.length) {
-      var b = Number(v), p = 1 / b;
       scale.transform(
         function(x) { return Math.pow(x, p); },
-        function(y) { return Math.pow(y, b); });
+        function(y) { return Math.pow(y, b); }
+      );
       return this;
     }
     return b;

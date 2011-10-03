@@ -25,7 +25,7 @@ pv.Force.charge = function(k) {
       min1 = 1 / min,
       max = 500, // maximum distance at which to observe forces
       max1 = 1 / max,
-      theta = .9, // Barnes-Hut theta approximation constant
+      theta = 0.9, // Barnes-Hut theta approximation constant
       force = {};
 
   if (!arguments.length) k = -40; // default charge constant (repulsion)
@@ -145,7 +145,7 @@ pv.Force.charge = function(k) {
       p.fx += fx;
       p.fy += fy;
     } else if (!n.leaf) {
-      var sx = (x1 + x2) * .5, sy = (y1 + y2) * .5;
+      var sx = (x1 + x2) * 0.5, sy = (y1 + y2) * 0.5;
       if (n.c1) forces(n.c1, p, x1, y1, sx, sy);
       if (n.c2) forces(n.c2, p, sx, y1, x2, sy);
       if (n.c3) forces(n.c3, p, x1, sy, sx, y2);

@@ -53,7 +53,7 @@ pv.Layout.Horizon = function() {
     buildImplied.call(this, s);
     bands = s.bands;
     mode = s.mode;
-    size = Math.round((mode == "color" ? .5 : 1) * s.height);
+    size = Math.round((mode == "color" ? 0.5 : 1) * s.height);
     fill = s.backgroundStyle;
     red = pv.ramp(fill, s.negativeStyle).domain(0, bands);
     blue = pv.ramp(fill, s.positiveStyle).domain(0, bands);

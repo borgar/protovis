@@ -83,7 +83,7 @@ pv.Layout.Hierarchy.NodeLink = {
 
     /** @private Returns the angle of the given node. */
     function midAngle(n) {
-      return (n.parentNode ? (n.breadth - .25) * 2 * Math.PI : 0);
+      return (n.parentNode ? (n.breadth - 0.25) * 2 * Math.PI : 0);
     }
 
     /** @private */
@@ -221,7 +221,7 @@ pv.Layout.Hierarchy.Fill = {
 
     /** @private */
     function startAngle(n) {
-      return (n.parentNode ? n.minBreadth - .25 : 0) * 2 * Math.PI;
+      return (n.parentNode ? n.minBreadth - 0.25 : 0) * 2 * Math.PI;
     }
 
     /** @private */

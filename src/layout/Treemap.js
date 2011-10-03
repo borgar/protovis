@@ -204,8 +204,9 @@ pv.Layout.Treemap.prototype.buildImplied = function(s) {
 
   /** @private */
   function slice(row, sum, horizontal, x, y, w, h) {
+    var n;
     for (var i = 0, d = 0; i < row.length; i++) {
-      var n = row[i];
+      n = row[i];
       if (horizontal) {
         n.x = x + d;
         n.y = y;
@@ -319,23 +320,27 @@ pv.Layout.Treemap.prototype.buildImplied = function(s) {
   root.visitAfter(function(n, i) {
       n.depth = i;
       n.x = n.y = n.dx = n.dy = 0;
-      n.size = n.firstChild
-          ? pv.sum(n.childNodes, function(n) { return n.size; })
-          : that.$size.apply(that, (stack[0] = n, stack));
+      if ( n.firstChild ) {
+        n.size = pv.sum(n.childNodes, function(n) { return n.size; });
+      }
+      else {
+        stack[0] = n;
+        n.size = that.$size.apply(that, stack);
+      }
     });
   stack.shift();
 
   /* Sort. */
   switch (s.order) {
-    case "ascending": {
+    case "ascending":
       root.sort(function(a, b) { return a.size - b.size; });
       break;
-    }
-    case "descending": {
+    case "descending":
       root.sort(function(a, b) { return b.size - a.size; });
       break;
-    }
-    case "reverse": root.reverse(); break;
+    case "reverse":
+      root.reverse();
+      break;
   }
 
   /* Recursively compute the layout. */

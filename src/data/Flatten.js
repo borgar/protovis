@@ -106,7 +106,7 @@ pv.Flatten.prototype.array = function() {
 
   /* Recursively visit using the leaf function. */
   if (leaf) {
-    function recurse(value, i) {
+    var recurse = function (value, i) {
       if (leaf(value)) {
         entries.push({keys: stack.slice(), value: value});
       } else {
@@ -116,7 +116,7 @@ pv.Flatten.prototype.array = function() {
           stack.pop();
         }
       }
-    }
+    };
     recurse(this.map, 0);
     return entries;
   }

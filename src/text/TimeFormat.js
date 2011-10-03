@@ -28,7 +28,7 @@ pv.Format.time = function(type) {
   function format(t) {
     t = Number(t); // force conversion from Date
     switch (type) {
-      case "short": {
+      case "short":
         if (t >= 31536e6) {
           return (t / 31536e6).toFixed(1) + " years";
         } else if (t >= 6048e5) {
@@ -41,8 +41,8 @@ pv.Format.time = function(type) {
           return (t / 6e4).toFixed(1) + " minutes";
         }
         return (t / 1e3).toFixed(1) + " seconds";
-      }
-      case "long": {
+
+      case "long":
         var a = [],
             s = ((t % 6e4) / 1e3) >> 0,
             m = ((t % 36e5) / 6e4) >> 0;
@@ -60,7 +60,7 @@ pv.Format.time = function(type) {
           a.push(m.toFixed());
         }
         return a.reverse().join(":");
-      }
+
     }
   }
 
@@ -83,10 +83,11 @@ pv.Format.time = function(type) {
    * @returns {number} the parsed duration in milliseconds.
    */
   format.parse = function(s) {
+    var a, t = 0;
     switch (type) {
-      case "short": {
-        var re = /([0-9,.]+)\s*([a-z]+)/g, a, t = 0;
-        while (a = re.exec(s)) {
+      case "short":
+        var re = /([0-9,.]+)\s*([a-z]+)/g;
+        while ( (a = re.exec(s)) ) {
           var f = parseFloat(a[0].replace(",", "")), u = 0;
           switch (a[2].toLowerCase()) {
             case "year": case "years": u = 31536e6; break;
@@ -99,17 +100,17 @@ pv.Format.time = function(type) {
           t += f * u;
         }
         return t;
-      }
-      case "long": {
-        var a = s.replace(",", "").split(":").reverse(), t = 0;
+
+      case "long":
+        a = s.replace(",", "").split(":").reverse();
         if (a.length) t += parseFloat(a[0]) * 1e3;
         if (a.length > 1) t += parseFloat(a[1]) * 6e4;
         if (a.length > 2) t += parseFloat(a[2]) * 36e5;
         if (a.length > 3) t += parseFloat(a[3]) * 864e5;
         return t;
-      }
+
     }
-  }
+  };
 
   return format;
 };

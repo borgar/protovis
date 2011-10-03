@@ -301,7 +301,7 @@ pv.SvgScene.monotoneTangents = function(points) {
 
   /* Step 3. Very important, step 3. Yep. Wouldn't miss it. */
   for (k = 0; k < points.length - 1; k++) {
-    if (d[k] == 0) {
+    if (d[k] === 0) {
       m[ k ] = 0;
       m[k+1] = 0;
     }
@@ -339,7 +339,7 @@ pv.SvgScene.monotoneTangents = function(points) {
 pv.SvgScene.curveMonotone = function(points) {
   if (points.length <= 2) return "";
   return this.curveHermite(points, this.monotoneTangents(points));
-}
+};
 
 /**
  * @private Interpolates the given points using Fritsch-Carlson Monotone cubic

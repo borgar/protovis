@@ -247,17 +247,24 @@ pv.Scale.quantitative = function() {
     /* Special case: dates. */
     if (type == newDate) {
       /* Floor the date d given the precision p. */
-      function floor(d, p) {
+      var floor = function (d, p) {
         switch (p) {
           case 31536e6: d.setMonth(0);
+            /* falls through */
           case 2592e6: d.setDate(1);
+            /* falls through */
           case 6048e5: if (p == 6048e5) d.setDate(d.getDate() - d.getDay());
+            /* falls through */
           case 864e5: d.setHours(0);
+            /* falls through */
           case 36e5: d.setMinutes(0);
+            /* falls through */
           case 6e4: d.setSeconds(0);
+            /* falls through */
           case 1e3: d.setMilliseconds(0);
+            /* falls through */
         }
-      }
+      };
 
       var precision, format, increment, step = 1;
       if (span >= 3 * 31536e6) {
@@ -302,38 +309,32 @@ pv.Scale.quantitative = function() {
       var n = span / precision;
       if (n > 10) {
         switch (precision) {
-          case 36e5: {
+          case 36e5:
             step = (n > 20) ? 6 : 3;
             date.setHours(Math.floor(date.getHours() / step) * step);
             break;
-          }
-          case 2592e6: {
+          case 2592e6:
             step = 3; // seasons
             date.setMonth(Math.floor(date.getMonth() / step) * step);
             break;
-          }
-          case 6e4: {
+          case 6e4:
             step = (n > 30) ? 15 : ((n > 15) ? 10 : 5);
             date.setMinutes(Math.floor(date.getMinutes() / step) * step);
             break;
-          }
-          case 1e3: {
+          case 1e3:
             step = (n > 90) ? 15 : ((n > 60) ? 10 : 5);
             date.setSeconds(Math.floor(date.getSeconds() / step) * step);
             break;
-          }
-          case 1: {
+          case 1:
             step = (n > 1000) ? 250 : ((n > 200) ? 100 : ((n > 100) ? 50 : ((n > 50) ? 25 : 5)));
             date.setMilliseconds(Math.floor(date.getMilliseconds() / step) * step);
             break;
-          }
-          default: {
+          default:
             step = pv.logCeil(n / 15, 10);
             if (n / step < 2) step /= 5;
             else if (n / step < 5) step /= 2;
             date.setFullYear(Math.floor(date.getFullYear() / step) * step);
             break;
-          }
         }
       }
 
@@ -349,13 +350,13 @@ pv.Scale.quantitative = function() {
     if (!arguments.length) m = 10;
     var step = pv.logFloor(span / m, 10),
         err = m / (span / step);
-    if (err <= .15) step *= 10;
-    else if (err <= .35) step *= 5;
-    else if (err <= .75) step *= 2;
+    if (err <= 0.15) step *= 10;
+    else if (err <= 0.35) step *= 5;
+    else if (err <= 0.75) step *= 2;
     var start = Math.ceil(min / step) * step,
         end = Math.floor(max / step) * step;
     tickFormat = pv.Format.number()
-        .fractionDigits(Math.max(0, -Math.floor(pv.log(step, 10) + .01)));
+        .fractionDigits(Math.max(0, -Math.floor(pv.log(step, 10) + 0.01)));
     var ticks = pv.range(start, end + step, step);
     return reverse ? ticks.reverse() : ticks;
   };

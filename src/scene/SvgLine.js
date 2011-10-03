@@ -95,16 +95,18 @@ pv.SvgScene.pathSegment = function(s1, s2) {
   switch (s1.interpolate) {
     case "polar-reverse":
       l = 0;
-    case "polar": {
+      /* falls through */
+    case "polar":
       var dx = s2.left - s1.left,
           dy = s2.top - s1.top,
           e = 1 - s1.eccentricity,
           r = Math.sqrt(dx * dx + dy * dy) / (2 * e);
       if ((e <= 0) || (e > 1)) break; // draw a straight line
       return "A" + r + "," + r + " 0 0," + l + " " + s2.left + "," + s2.top;
-    }
-    case "step-before": return "V" + s2.top + "H" + s2.left;
-    case "step-after": return "H" + s2.left + "V" + s2.top;
+    case "step-before": 
+      return "V" + s2.top + "H" + s2.left;
+    case "step-after":
+      return "H" + s2.left + "V" + s2.top;
   }
   return "L" + s2.left + "," + s2.top;
 };
@@ -112,7 +114,7 @@ pv.SvgScene.pathSegment = function(s1, s2) {
 /** @private Line-line intersection, per Akenine-Moller 16.16.1. */
 pv.SvgScene.lineIntersect = function(o1, d1, o2, d2) {
   return o1.plus(d1.times(o2.minus(o1).dot(d2.perp()) / d1.dot(d2.perp())));
-}
+};
 
 /** @private Returns the miter join path for the specified points. */
 pv.SvgScene.pathJoin = function(s0, s1, s2, s3) {

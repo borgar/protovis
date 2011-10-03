@@ -680,7 +680,7 @@ pv.Mark.prototype.last = function() {
  * @returns a node in the scene graph, or null.
  */
 pv.Mark.prototype.sibling = function() {
-  return (this.index == 0) ? null : this.scene[this.index - 1];
+  return (this.index === 0) ? null : this.scene[this.index - 1];
 };
 
 /**
@@ -833,7 +833,7 @@ pv.Mark.prototype.bind = function() {
           }
         }
       }
-    } while (mark = mark.proto);
+    } while ( (mark = mark.proto) );
   }
 
   /* Scan the proto chain for all defined properties. */
@@ -844,11 +844,13 @@ pv.Mark.prototype.bind = function() {
 
   /* Any undefined properties are null. */
   var mark = this;
-  do for (var name in mark.properties) {
-    if (!(name in seen)) {
-      types[2].push(seen[name] = {name: name, type: 2, value: null});
+  do {
+    for (var name in mark.properties) {
+      if (!(name in seen)) {
+        types[2].push(seen[name] = {name: name, type: 2, value: null});
+      }
     }
-  } while (mark = mark.proto);
+  } while ( (mark = mark.proto) );
 
   /* Define setter-getter for inherited defs. */
   var defs = types[0].concat(types[1]);
@@ -1073,14 +1075,14 @@ pv.Mark.prototype.mouse = function() {
   do {
     x -= n.offsetLeft;
     y -= n.offsetTop;
-  } while (n = n.offsetParent);
+  } while ( (n = n.offsetParent) );
 
   /* Compute the inverse transform of all enclosing panels. */
   var t = pv.Transform.identity,
       p = this.properties.transform ? this : this.parent,
       pz = [];
-  do { pz.push(p); } while (p = p.parent);
-  while (p = pz.pop()) t = t.translate(p.left(), p.top()).times(p.transform());
+  do { pz.push(p); } while ( (p = p.parent) );
+  while ( (p = pz.pop()) ) t = t.translate(p.left(), p.top()).times(p.transform());
   t = t.invert();
 
   return pv.vector(x * t.k + t.x, y * t.k + t.y);
@@ -1164,7 +1166,7 @@ pv.Mark.prototype.context = function(scene, index, f) {
       mark.scene = scene;
       index = scene.parentIndex;
       scene = scene.parent;
-    } while (mark = mark.parent);
+    } while ( (mark = mark.parent) );
 
     /* Set ancestors' scale; requires top-down. */
     for (var i = ancestors.length - 1, k = 1; i > 0; i--) {
@@ -1203,7 +1205,7 @@ pv.Mark.prototype.context = function(scene, index, f) {
         delete mark.scale;
       }
       delete mark.index;
-    } while (mark = mark.parent);
+    } while ( (mark = mark.parent) );
   }
 
   /* Context switch, invoke the function, then switch back. */

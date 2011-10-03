@@ -11,22 +11,20 @@ pv.SvgScene.dot = function(scenes) {
     /* points */
     var radius = s.radius, path = null;
     switch (s.shape) {
-      case "cross": {
+      case "cross":
         path = "M" + -radius + "," + -radius
             + "L" + radius + "," + radius
             + "M" + radius + "," + -radius
             + "L" + -radius + "," + radius;
         break;
-      }
-      case "triangle": {
+      case "triangle":
         var h = radius, w = radius * 1.1547; // 2 / Math.sqrt(3)
         path = "M0," + h
             + "L" + w +"," + -h
             + " " + -w + "," + -h
             + "Z";
         break;
-      }
-      case "diamond": {
+      case "diamond":
         radius *= Math.SQRT2;
         path = "M0," + -radius
             + "L" + radius + ",0"
@@ -34,23 +32,19 @@ pv.SvgScene.dot = function(scenes) {
             + " " + -radius + ",0"
             + "Z";
         break;
-      }
-      case "square": {
+      case "square":
         path = "M" + -radius + "," + -radius
             + "L" + radius + "," + -radius
             + " " + radius + "," + radius
             + " " + -radius + "," + radius
             + "Z";
         break;
-      }
-      case "tick": {
+      case "tick":
         path = "M0,0L0," + -s.size;
         break;
-      }
-      case "bar": {
+      case "bar":
         path = "M0," + (s.size / 2) + "L0," + -(s.size / 2);
         break;
-      }
     }
 
     /* Use <circle> for circles, <path> for everything else. */

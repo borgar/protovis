@@ -134,7 +134,7 @@ pv.Layout.Stack = function() {
     /* order */
     var index;
     switch (s.order) {
-      case "inside-out": {
+      case "inside-out":
         var max = dy.map(function(v) { return pv.max.index(v); }),
             map = pv.range(n).sort(function(a, b) { return max[a] - max[b]; }),
             sums = dy.map(function(v) { return pv.sum(v); }),
@@ -154,22 +154,24 @@ pv.Layout.Stack = function() {
         }
         index = bottoms.reverse().concat(tops);
         break;
-      }
-      case "reverse": index = pv.range(n - 1, -1, -1); break;
-      default: index = pv.range(n); break;
+      case "reverse":
+        index = pv.range(n - 1, -1, -1);
+        break;
+      default:
+        index = pv.range(n);
+        break;
     }
 
     /* offset */
     switch (s.offset) {
-      case "silohouette": {
+      case "silohouette":
         for (var j = 0; j < m; j++) {
           var o = 0;
           for (var i = 0; i < n; i++) o += dy[i][j];
           y[index[0]][j] = (h - o) / 2;
         }
         break;
-      }
-      case "wiggle": {
+      case "wiggle":
         var o = 0;
         for (var i = 0; i < n; i++) o += dy[i][0];
         y[index[0]][0] = o = (h - o) / 2;
@@ -186,8 +188,7 @@ pv.Layout.Stack = function() {
           y[index[0]][j] = o -= s1 ? s2 / s1 * dx : 0;
         }
         break;
-      }
-      case "expand": {
+      case "expand":
         for (var j = 0; j < m; j++) {
           y[index[0]][j] = 0;
           var k = 0;
@@ -201,11 +202,9 @@ pv.Layout.Stack = function() {
           }
         }
         break;
-      }
-      default: {
+      default:
         for (var j = 0; j < m; j++) y[index[0]][j] = 0;
         break;
-      }
     }
 
     /* Propagate the offset to the other series. */

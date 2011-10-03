@@ -111,9 +111,13 @@ pv.Layout.Pack.prototype.$radius = function() { return 1; };
  * @returns {pv.Layout.Pack} this.
  */
 pv.Layout.Pack.prototype.size = function(f) {
-  this.$radius = typeof f == "function"
-      ? function() { return Math.sqrt(f.apply(this, arguments)); }
-      : (f = Math.sqrt(f), function() { return f; });
+  if (typeof f == "function") {
+    this.$radius = function() { return Math.sqrt(f.apply(this, arguments)); };
+  }
+  else {
+    f = Math.sqrt(f);
+    this.$radius = function() { return f; };
+  }
   return this;
 };
 
@@ -132,7 +136,8 @@ pv.Layout.Pack.prototype.buildImplied = function(s) {
     for (var i = 0, n = nodes.length; i < n; i++) {
       var c = nodes[i];
       if (!c.firstChild) {
-        c.radius = that.$radius.apply(that, (stack[0] = c, stack));
+        stack[0] = c;
+        c.radius = that.$radius.apply(that, stack);
       }
     }
     stack.shift();
@@ -149,14 +154,12 @@ pv.Layout.Pack.prototype.buildImplied = function(s) {
 
     /* Sort. */
     switch (s.order) {
-      case "ascending": {
+      case "ascending":
         nodes.sort(function(a, b) { return a.radius - b.radius; });
         break;
-      }
-      case "descending": {
+      case "descending":
         nodes.sort(function(a, b) { return b.radius - a.radius; });
         break;
-      }
       case "reverse": nodes.reverse(); break;
     }
 
@@ -199,7 +202,7 @@ pv.Layout.Pack.prototype.buildImplied = function(s) {
       var dx = b.x - a.x,
           dy = b.y - a.y,
           dr = a.radius + b.radius;
-      return (dr * dr - dx * dx - dy * dy) > .001; // within epsilon
+      return (dr * dr - dx * dx - dy * dy) > 0.001; // within epsilon
     }
 
     /* Create first node. */
@@ -250,7 +253,7 @@ pv.Layout.Pack.prototype.buildImplied = function(s) {
           }
 
           /* Update node chain. */
-          if (isect == 0) {
+          if (isect === 0) {
             insert(a, c);
             b = c;
             bound(c);

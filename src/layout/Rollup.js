@@ -75,7 +75,7 @@ pv.Layout.Rollup = function() {
   /* Render rollup links. */
   this.link
       .interpolate("polar")
-      .eccentricity(.8);
+      .eccentricity(0.8);
 
   this.link.add = function(type) {
     return that.add(pv.Panel)

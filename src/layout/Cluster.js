@@ -112,10 +112,10 @@ pv.Layout.Cluster.prototype.buildImplied = function(s) {
       breadth,
       depth,
       leafCount = 0,
-      leafIndex = .5 - group / 2;
+      leafIndex = 0.5 - group / 2;
 
   /* Count the leaf nodes and compute the depth of descendants. */
-  var p = undefined;
+  var p = null;
   root.visitAfter(function(n) {
       if (n.firstChild) {
         n.depth = 1 + pv.max(n.childNodes, function(n) { return n.depth; });
@@ -132,7 +132,7 @@ pv.Layout.Cluster.prototype.buildImplied = function(s) {
   depth = 1 / root.depth;
 
   /* Compute the unit breadth and depth of each node. */
-  var p = undefined;
+  var p = null;
   root.visitAfter(function(n) {
       if (n.firstChild) {
         n.breadth = pv.mean(n.childNodes, function(n) { return n.breadth; });

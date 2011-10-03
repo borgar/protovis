@@ -19,7 +19,7 @@ pv.range = function(start, stop, step) {
     stop = start;
     start = 0;
   }
-  if (step == undefined) step = 1;
+  if (step == null) step = 1;
   if ((stop - start) / step == Infinity) throw new Error("range must be finite");
   var array = [], i = 0, j;
   stop -= (stop - start) * 1e-10; // floating point precision!
@@ -52,7 +52,7 @@ pv.random = function(start, stop, step) {
     stop = start;
     start = 0;
   }
-  if (step == undefined) step = 1;
+  if (step == null) step = 1;
   return step
       ? (Math.floor(Math.random() * (stop - start) / step) * step + start)
       : (Math.random() * (stop - start) + start);
@@ -115,7 +115,7 @@ pv.max.index = function(array, f) {
     }
   }
   return maxi;
-}
+};
 
 /**
  * Returns the minimum value of the specified array of numbers. If the specified
@@ -157,7 +157,7 @@ pv.min.index = function(array, f) {
     }
   }
   return mini;
-}
+};
 
 /**
  * Returns the arithmetic mean, or average, of the specified array. If the
@@ -251,7 +251,7 @@ pv.log = function(x, b) {
  * @returns {number} the symmetric log value.
  */
 pv.logSymmetric = function(x, b) {
-  return (x == 0) ? 0 : ((x < 0) ? -pv.log(-x, b) : pv.log(x, b));
+  return (x === 0) ? 0 : ((x < 0) ? -pv.log(-x, b) : pv.log(x, b));
 };
 
 /**

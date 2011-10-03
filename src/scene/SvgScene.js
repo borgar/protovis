@@ -157,15 +157,13 @@ pv.SvgScene.dispatch = pv.listener(function(e) {
 
     /* Fixes for mousewheel support on Firefox & Opera. */
     switch (type) {
-      case "DOMMouseScroll": {
+      case "DOMMouseScroll":
         type = "mousewheel";
         e.wheel = -480 * e.detail;
         break;
-      }
-      case "mousewheel": {
+      case "mousewheel":
         e.wheel = (window.opera ? 12 : 1) * e.wheelDelta;
         break;
-      }
     }
 
     if (pv.Mark.dispatch(type, t.scenes, t.index)) e.preventDefault();
@@ -182,4 +180,4 @@ pv.SvgScene.removeSiblings = function(e) {
 };
 
 /** @private Do nothing when rendering undefined mark types. */
-pv.SvgScene.undefined = function() {};
+pv.SvgScene['undefined'] = function() {};
