@@ -124,28 +124,25 @@ pv.SvgScene.append = function(e, scenes, index) {
 
 /**
  * Applies a title tooltip to the specified element <tt>e</tt>, using the
- * <tt>title</tt> property of the specified scene node <tt>s</tt>. Note that
- * this implementation does not create an SVG <tt>title</tt> element as a child
- * of <tt>e</tt>; although this is the recommended standard, it is only
- * supported in Opera. Instead, an anchor element is created around the element
- * <tt>e</tt>, and the <tt>xlink:title</tt> attribute is set accordingly.
+ * <tt>title</tt> property of the specified scene node <tt>s</tt>.
  *
  * @param e an SVG element.
  * @param s a scene node.
  */
 pv.SvgScene.title = function(e, s) {
-  var a = e.parentNode;
-  if (a && (a.tagName != "a")) a = null;
-  if (s.title) {
-    if (!a) {
-      a = this.create("a");
-      if (e.parentNode) e.parentNode.replaceChild(a, e);
-      a.appendChild(e);
+  var t = e.getElementsByTagName('title')[0];
+  if ( s.title ) {
+    if ( !t ) {
+      t = e.appendChild( pv.SvgScene.create('title') );
+      t.appendChild( document.createTextNode(s.title) );
     }
-    a.setAttributeNS(this.xlink, "title", s.title);
-    return a;
+    else {
+      t.firstChild.nodeValue = s.title;
+    }
   }
-  if (a) a.parentNode.replaceChild(e, a);
+  else if ( t ) {
+    t.removeChild( t );
+  }
   return e;
 };
 
