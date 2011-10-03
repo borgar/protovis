@@ -91,7 +91,7 @@ pv.Scale.ordinal = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      array = (array instanceof Array)
+      array = (pv.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
 
@@ -140,7 +140,7 @@ pv.Scale.ordinal = function() {
    */
   scale.range = function(array, f) {
     if (arguments.length) {
-      r = (array instanceof Array)
+      r = (pv.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (typeof r[0] == "string") r = r.map(pv.color);

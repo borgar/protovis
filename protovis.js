@@ -348,6 +348,11 @@ pv.id = function() {
 pv.functor = function(v) {
   return typeof v == "function" ? v : function() { return v; };
 };
+
+/** @private Returns true if <i>a</i> is a JavaScript Array object. */
+pv.isArray = function(a) {
+  return !!a && Object.prototype.toString.call(a) === "[object Array]";
+};
 /*
  * Parses the Protovis specifications on load, allowing the use of JavaScript
  * 1.8 function expressions on browsers that only support JavaScript 1.6.
@@ -2430,7 +2435,7 @@ pv.Nest.prototype.entries = function() {
     var array = [];
     for (var k in map) {
       var v = map[k];
-      array.push({ key: k, values: (v instanceof Array) ? v : entries(v) });
+      array.push({ key: k, values: pv.isArray(v) ? v : entries(v) });
     }
     return array;
   }
@@ -2472,7 +2477,7 @@ pv.Nest.prototype.rollup = function(f) {
   function rollup(map) {
     for (var key in map) {
       var value = map[key];
-      if (value instanceof Array) {
+      if (pv.isArray(value)) {
         map[key] = f(value);
       } else {
         rollup(value);
@@ -3080,7 +3085,7 @@ pv.Scale.quantitative = function() {
   scale.domain = function(array, min, max) {
     if (arguments.length) {
       var o; // the object we use to infer the domain type
-      if (array instanceof Array) {
+      if (pv.isArray(array)) {
         if (arguments.length < 2) min = pv.identity;
         if (arguments.length < 3) max = min;
         o = array.length && min(array[0]);
@@ -3093,7 +3098,7 @@ pv.Scale.quantitative = function() {
       else if (d.length == 1) d = [d[0], d[0]];
       n = (d[0] || d[d.length - 1]) < 0;
       l = d.map(f);
-      type = (o instanceof Date) ? newDate : Number;
+      type = (Object.prototype.toString.call(o) === "[object Date]") ? newDate : Number;
       return this;
     }
     return d.map(type);
@@ -3729,7 +3734,7 @@ pv.Scale.ordinal = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      array = (array instanceof Array)
+      array = (pv.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
 
@@ -3778,7 +3783,7 @@ pv.Scale.ordinal = function() {
    */
   scale.range = function(array, f) {
     if (arguments.length) {
-      r = (array instanceof Array)
+      r = (pv.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (typeof r[0] == "string") r = r.map(pv.color);
@@ -4004,7 +4009,7 @@ pv.Scale.quantile = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (array instanceof Array)
+      d = (pv.isArray(array))
           ? pv.map(array, f)
           : Array.prototype.slice.call(arguments);
       d.sort(pv.naturalOrder);
@@ -15213,7 +15218,7 @@ pv.Geo.scale = function(p) {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (array instanceof Array)
+      d = (pv.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (d.length > 1) {

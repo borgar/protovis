@@ -99,7 +99,7 @@ pv.Scale.quantile = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (array instanceof Array)
+      d = (pv.isArray(array))
           ? pv.map(array, f)
           : Array.prototype.slice.call(arguments);
       d.sort(pv.naturalOrder);

@@ -202,7 +202,7 @@ pv.Nest.prototype.entries = function() {
     var array = [];
     for (var k in map) {
       var v = map[k];
-      array.push({ key: k, values: (v instanceof Array) ? v : entries(v) });
+      array.push({ key: k, values: pv.isArray(v) ? v : entries(v) });
     }
     return array;
   }
@@ -244,7 +244,7 @@ pv.Nest.prototype.rollup = function(f) {
   function rollup(map) {
     for (var key in map) {
       var value = map[key];
-      if (value instanceof Array) {
+      if (pv.isArray(value)) {
         map[key] = f(value);
       } else {
         rollup(value);

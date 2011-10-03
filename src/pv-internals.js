@@ -156,3 +156,8 @@ pv.id = function() {
 pv.functor = function(v) {
   return typeof v == "function" ? v : function() { return v; };
 };
+
+/** @private Returns true if <i>a</i> is a JavaScript Array object. */
+pv.isArray = function(a) {
+  return !!a && Object.prototype.toString.call(a) === "[object Array]";
+};

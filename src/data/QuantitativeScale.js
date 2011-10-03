@@ -136,7 +136,7 @@ pv.Scale.quantitative = function() {
   scale.domain = function(array, min, max) {
     if (arguments.length) {
       var o; // the object we use to infer the domain type
-      if (array instanceof Array) {
+      if (pv.isArray(array)) {
         if (arguments.length < 2) min = pv.identity;
         if (arguments.length < 3) max = min;
         o = array.length && min(array[0]);
@@ -149,7 +149,7 @@ pv.Scale.quantitative = function() {
       else if (d.length == 1) d = [d[0], d[0]];
       n = (d[0] || d[d.length - 1]) < 0;
       l = d.map(f);
-      type = (o instanceof Date) ? newDate : Number;
+      type = (Object.prototype.toString.call(o) === "[object Date]") ? newDate : Number;
       return this;
     }
     return d.map(type);
