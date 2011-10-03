@@ -17,11 +17,16 @@
  * href="http://javascript.crockford.com/prototypal.html">prototypal
  * inheritance</a>.
  */
-pv.extend = function(f) {
-  function g() {}
-  g.prototype = f.prototype || f;
-  return new g();
-};
+
+pv.extend = Object.create
+  ? function ( f ) {
+    return Object.create( f.prototype || f );
+  }
+  : function ( f ) {
+    function g() {}
+    g.prototype = f.prototype || f;
+    return new g();
+  };
 
 try {
   eval("pv.parse = function(x) x;"); // native support
