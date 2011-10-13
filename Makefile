@@ -89,7 +89,9 @@ JS_LAYOUT_FILES = \
 	${SRC_DIR}/layout/Horizon.js \
 	${SRC_DIR}/layout/Rollup.js \
 	${SRC_DIR}/layout/Matrix.js \
-	${SRC_DIR}/layout/Bullet.js \
+	${SRC_DIR}/layout/Bullet.js
+
+JS_BEHAVIOR_FILES = \
 	${SRC_DIR}/behavior/Behavior.js \
 	${SRC_DIR}/behavior/Drag.js \
 	${SRC_DIR}/behavior/Point.js \
@@ -109,6 +111,7 @@ JS_FILES = \
 	$(JS_LANG_FILES) \
 	$(JS_CORE_FILES) \
 	$(JS_LAYOUT_FILES) \
+	$(JS_BEHAVIOR_FILES) \
 	$(JS_GEO_FILES)
 
 
@@ -118,6 +121,7 @@ pv: protovis
 protovis: protovis.js
 min: protovis.min.js
 
+mini: pv.js pv.min.js
 
 lint: protovis.js
 	@@if test ! -z ${JSLINT}; then \
@@ -131,6 +135,10 @@ lint: protovis.js
 protovis.js: $(JS_FILES) Makefile
 	@@echo "Building" $@
 	@@cat $(JS_FILES) > $@
+
+pv.js: $(JS_LANG_FILES) $(JS_CORE_FILES) Makefile
+	@@echo "Building" $@
+	@@cat $(JS_LANG_FILES) $(JS_CORE_FILES) $(JS_BEHAVIOR_FILES) > $@
 
 
 %.min.js: %.js Makefile
@@ -149,4 +157,4 @@ clean:
 	rm -rf protovis.js protovis.min.js jsdoc
 
 
-.PHONY: all pv protovis lint min clean
+.PHONY: all pv protovis lint min clean mini
