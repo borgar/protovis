@@ -83,7 +83,7 @@ pv.transpose = function(arrays) {
   if (m > n) {
     arrays.length = m;
     for (var i = n; i < m; i++) {
-      arrays[i] = new Array(n);
+      arrays[i] = Array(n);
     }
     for (var i = 0; i < n; i++) {
       for (var j = i + 1; j < m; j++) {
@@ -156,7 +156,7 @@ pv.normalize = function(array, f) {
  */
 pv.permute = function(array, indexes, f) {
   if (!f) f = pv.identity;
-  var p = new Array(indexes.length), o = {};
+  var p = Array(indexes.length), o = {};
   indexes.forEach(function(j, i) { o.index = j; p[i] = f.call(o, array[j]); });
   return p;
 };

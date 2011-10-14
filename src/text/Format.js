@@ -74,5 +74,5 @@ pv.Format.re = function(s) {
  */
 pv.Format.pad = function(c, n, s) {
   var m = n - String(s).length;
-  return (m < 1) ? s : new Array(m + 1).join(c) + s;
+  return (m < 1) ? s : Array(m + 1).join(c) + s;
 };
