@@ -64,6 +64,23 @@ pv.Format.re = function(s) {
 };
 
 /**
+ * @private Given a regular expression string this methods returns a regular
+ * expression object. The string is passed through unescaped.
+ *
+ * @param {string} p a string pattern to compile.
+ * @param {string} flags a string of match modifier flags.
+ * @returns {string} RegExp object.
+ */
+pv.Format.re.compile = function(p, flags) {
+  var key = p + '/' + flags;
+  if ( !pv.Format.re.$cache[ key ] ) {
+    pv.Format.re.$cache[ key ] = new RegExp( p, flags || "" );
+  }
+  return pv.Format.re.$cache[ key ];
+};
+pv.Format.re.$cache = {};
+
+/**
  * @private Optionally pads the specified string <i>s</i> so that it is at least
  * <i>n</i> characters long, using the padding character <i>c</i>.
  *

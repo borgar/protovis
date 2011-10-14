@@ -33,6 +33,9 @@ text += "-1\t\u22121\t" + i + "\n";
 i = pv.Format.number().negativeAffix("(", ")").integerDigits(2)(-1);
 text += "-1\t(01)\t" + i + "\n";
 
+i = pv.Format.number().negativeAffix("(", ")").fractionDigits(2)(-1.5);
+text += "-1.5\t(1.50)\t" + i + "\n";
+
 i = pv.Format.number().integerDigits(2)(-1);
 text += "-1\t\u221201\t" + i + "\n";
 

@@ -17,7 +17,9 @@ pv.Format.number = function() {
       maxf = 0, // default maximum fraction digits
       maxk = 1, // 10^maxf
       padi = "0", // default integer pad
+      padistr = "",
       padf = "0", // default fraction pad
+      padfstr = "",
       padg = true, // whether group separator affects integer padding
       decimal = ".", // default decimal separator
       group = ",", // default group separator
@@ -26,23 +28,49 @@ pv.Format.number = function() {
 
   /** @private */
   function format(x) {
-    /* Round the fractional part, and split on decimal separator. */
-    if (Infinity > maxf) x = Math.round(x * maxk) / maxk;
-    var s = String(Math.abs(x)).split(".");
-
-    /* Pad, truncate and group the integral part. */
-    var i = s[0];
-    if (i.length > maxi) i = i.substring(i.length - maxi);
-    if (padg && (i.length < mini)) i = new Array(mini - i.length + 1).join(padi) + i;
-    if (i.length > 3) i = i.replace(/\B(?=(?:\d{3})+(?!\d))/g, group);
-    if (!padg && (i.length < mins)) i = new Array(mins - i.length + 1).join(padi) + i;
-    s[0] = x < 0 ? np + i + ns : i;
-
-    /* Pad the fractional part. */
-    var f = s[1] || "";
-    if (f.length < minf) s[1] = f + new Array(minf - f.length + 1).join(padf);
-
-    return s.join(decimal);
+    // Round the fractional part, and split on decimal separator.
+    if ( Infinity > maxf ) {
+      x = Math.round(x * maxk) / maxk;
+    }
+    // Pad, truncate and group the integral part.
+    var neg = (x < 0),
+        pad = '',
+        d = '',
+        f = '',
+        s = String(Math.abs(x)).split("."),
+        l = s[0].length,
+        n = Math.floor(Math.abs(x));
+    // truncate the int if it overflows max int digits
+    if ( l > maxi ) {
+      n = Number(s[0].substring(l - maxi));
+      l = maxi;
+    }
+    // pad the integer if it doesn't reach min integer digits (group doesn't affect)
+    if ( padg && (l < mini) ) {
+      pad = padistr.substring(0, mini - l);
+    }
+    // digit grouping
+    var c, i = '';
+    do {
+      c = ( n % 1000 );
+      n = Math.floor( n / 1000 );
+      i = ( n ? group : '' ) +
+          ( c < 100 && n ? '0' : '' ) +
+          ( c <  10 && n ? '0' : '' ) +
+          ( c + i );
+      n && ++l;
+    } while ( n );
+    // pad the integer if it doesn't reach min integer digits (group affects)
+    if ( !padg && (l < mins) ) {
+      pad = padistr.substring(0, mins - l);
+    }
+    // Pad the fractional part.
+    if ( x % 1 ) {
+      d = decimal;
+      f = s[1] + padfstr.substring(0, minf - s[1].length);
+    }
+    return ( neg ) ? np + pad + i + d + f + ns
+                   :      pad + i + d + f;
   }
 
   /**
@@ -67,15 +95,16 @@ pv.Format.number = function() {
    */
   format.parse = function(x) {
     var re = pv.Format.re;
+        compile = re.compile;
 
     /* Remove leading and trailing padding. Split on the decimal separator. */
     var s = String(x)
-        .replace(new RegExp("^(" + re(padi) + ")*"), "")
-        .replace(new RegExp("(" + re(padf) + ")*$"), "")
+        .replace(compile("^(?:" + re(padi) + ")*"), "")
+        .replace(compile("(?:" + re(padf) + ")*$"), "")
         .split(decimal);
 
     /* Remove grouping and truncate the integral part. */
-    var i = s[0].replace(new RegExp(re(group), "g"), "");
+    var i = s[0].replace(compile(re(group), "g"), "");
     if (i.length > maxi) i = i.substring(i.length - maxi);
 
     /* Round the fractional part. */
@@ -108,6 +137,7 @@ pv.Format.number = function() {
       mini = Number(min);
       maxi = (arguments.length > 1) ? Number(max) : mini;
       mins = mini + Math.floor(mini / 3) * group.length;
+      padistr = pv.Format.pad(padi, mini, ''); // precalc padding
       return this;
     }
     return [mini, maxi];
@@ -136,6 +166,7 @@ pv.Format.number = function() {
       minf = Number(min);
       maxf = (arguments.length > 1) ? Number(max) : minf;
       maxk = Math.pow(10, maxf);
+      padfstr = pv.Format.pad(padf, minf, ''); // precalc padding
       return this;
     }
     return [minf, maxf];
@@ -152,6 +183,7 @@ pv.Format.number = function() {
   format.integerPad = function(x) {
     if (arguments.length) {
       padi = String(x);
+      padistr = pv.Format.pad(padi, mini, ''); // precalc padding
       padg = /\d/.test(padi);
       return this;
     }
@@ -169,6 +201,7 @@ pv.Format.number = function() {
   format.fractionPad = function(x) {
     if (arguments.length) {
       padf = String(x);
+      padfstr = pv.Format.pad(padf, minf, ''); // precalc padding
       return this;
     }
     return padf;
