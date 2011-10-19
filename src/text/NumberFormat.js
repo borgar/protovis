@@ -24,13 +24,14 @@ pv.Format.number = function() {
       decimal = ".", // default decimal separator
       group = ",", // default group separator
       np = "\u2212", // default negative prefix
-      ns = ""; // default negative suffix
+      ns = "", // default negative suffix
+      sym = true; // default symmetrical number rounding
 
   /** @private */
   function format(x) {
     // Round the fractional part, and split on decimal separator.
     if ( Infinity > maxf ) {
-      x = Math.round(x * maxk) / maxk;
+      x = (x < 0 && sym) ? -Math.round(-x * maxk) / maxk : Math.round(x * maxk) / maxk;
     }
     // Pad, truncate and group the integral part.
     var neg = (x < 0),
@@ -237,6 +238,23 @@ pv.Format.number = function() {
       return this;
     }
     return group;
+  };
+
+  /**
+   * Sets or gets whether the rounding method used is symmetrical or asymmetrical.
+   * The default method is symmetrical (rounded away from zero). If this is set to
+   * false then then rounding is asymmetrical (rounded "up": away from zero if positive,
+   * toward zero if negative).
+   *
+   * @param {boolean} [x] new setting for symmetry.
+   * @returns {pv.Format.number} <tt>this</tt> or the current state of round method.
+   */
+  format.symmetricRounding = function(x) {
+    if (arguments.length) {
+      sym = !!x;
+      return this;
+    }
+    return !!x;
   };
 
   /**

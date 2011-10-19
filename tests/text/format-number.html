@@ -22,9 +22,15 @@ i = pv.Format.number()(0);
 text += "0\t0\t" + i + "\n";
 
 i = pv.Format.number()(-.5);
-text += "-.5\t0\t" + i + "\n";
+text += "-.5\t\u22121\t" + i + "\n";
 
 i = pv.Format.number()(-.6);
+text += "-.6\t\u22121\t" + i + "\n";
+
+i = pv.Format.number().symmetricRounding(false)(-.5);
+text += "-.5\t0\t" + i + "\n";
+
+i = pv.Format.number().symmetricRounding(false)(-.6);
 text += "-.6\t\u22121\t" + i + "\n";
 
 i = pv.Format.number()(-1);
