@@ -171,7 +171,7 @@ pv.Format.date = function(pattern) {
               var m = -1, mn = this.months, l = x.length;
               while ( ++m < 12 ) {
                 if ( mn[m].substr(0,l).toLowerCase() == x ) {
-                  return d.month = m;
+                  return (d.month = m);
                 }
               }
             });
@@ -295,7 +295,7 @@ pv.Format.date = function(pattern) {
         isoyear: null,
         isoweek: null,
         isoday: null,
-        ts: null,
+        ts: null
       };
       match.forEach(function(m, i) { fields[i].call(format, m, d); });
       // have timestamp
@@ -328,7 +328,7 @@ pv.Format.date = function(pattern) {
         w = Math.floor( (t.getTime() - Date.UTC(iso_year, 0, 1, -6)) / 864e5 );
     // return a 3-tuple, (ISO year, ISO week number, ISO weekday).
     return [ iso_year, 1+Math.floor(w/7), d||7 ];
-  }
+  };
 
   return format;
 };
