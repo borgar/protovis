@@ -128,7 +128,7 @@ lint: protovis.js
 		echo "Checking against JSHint..."; \
 		${JSLINT} $(JS_FILES) --config ./build/jshint.json; \
 	else \
-		echo "You must have JSHn installed in order to test."; \
+		echo "You must have JSHint installed in order to test."; \
 	fi
 
 
@@ -146,7 +146,7 @@ pv.js: $(JS_LANG_FILES) $(JS_CORE_FILES) Makefile
 		echo "Building" $@; \
 		${UGLIFY} < $< > $@; \
 	else \
-		echo "You must have ${UGLIFY} installed in order to minify the library."; \
+		echo "You must have UglifyJS installed in order to minify the library."; \
 	fi
 
 #jsdoc: $(JS_FILES) Makefile
