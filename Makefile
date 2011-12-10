@@ -2,7 +2,7 @@ SRC_DIR = ./src
 
 UGLIFY ?= `which uglifyjs`
 JSLINT ?= `which jshint`
-JSDOC_HOME = "/Library/jsdoc-toolkit"
+JSDOC_HOME = "/usr/local/lib/node_modules/jsdoc"
 
 JS_LANG_FILES = \
 	${SRC_DIR}/lang/Array.js
@@ -149,9 +149,9 @@ pv.js: $(JS_LANG_FILES) $(JS_CORE_FILES) Makefile
 		echo "You must have UglifyJS installed in order to minify the library."; \
 	fi
 
-#jsdoc: $(JS_FILES) Makefile
-#   rm -rf jsdoc
-#   java -jar $(JSDOC_HOME)/jsrun.jar $(JSDOC_HOME)/app/run.js -a -t=$(JSDOC_HOME)/templates/jsdoc -d=$@ -E="^pv-" $(JS_FILES)
+jsdoc: $(JS_FILES) Makefile
+	@@rm -rf jsdoc
+	@@$(JSDOC_HOME)/app/run.js -q -a -t=$(JSDOC_HOME)/templates/jsdoc -d=$@ -E="^pv-" $(JS_FILES)
  
 clean:
 	rm -rf protovis.js protovis.min.js jsdoc

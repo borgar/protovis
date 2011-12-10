@@ -18,9 +18,12 @@ To make the main Protovis library and the minified version:
     npm install -g uglifyjs
     make all
 
-To make the documentation, you will need to install [java][java], [jsdoc-toolkit][jsdoc], and prossibly edit the makefile. This will be fixed in a future release.
+To make the documentation, you will need to install [jsdoc-toolkit][jsdoc], and possibly edit the makefile:
 
-To run a lint n the library:
+    npm install -g jsdoc
+    make jsdoc
+
+To run a linter on the library:
 
     npm install -g jshint
     make lint
@@ -30,5 +33,4 @@ To run a lint n the library:
 [node]: http://nodejs.org/
 [npm]: http://npmjs.org/
 [make]: http://www.gnu.org/software/make/manual/make.html
-[jsdoc]: http://code.google.com/p/jsdoc-toolkit
-[java]: http://www.java.com/
+[jsdoc]: https://github.com/kaleb/node-jsdoc-toolkit
