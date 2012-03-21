@@ -110,3 +110,19 @@ if (!Array.prototype.reduce) Array.prototype.reduce = function(f, v) {
   }
   return v;
 };
+
+/**
+ * Test if an object is a true array. Implemented in ECMAScript 5.
+ *
+ * @function
+ * @name Array.isArray
+ * @see <a
+ * href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/isArray">isArray</a>
+ * documentation.
+ * @param [obj] The object to be checked
+ */
+if ( !Array.isArray ) {
+  Array.isArray = function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+  };
+}

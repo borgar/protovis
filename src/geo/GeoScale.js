@@ -181,7 +181,7 @@ pv.Geo.scale = function(p) {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (pv.isArray(array))
+      d = (Array.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (d.length > 1) {

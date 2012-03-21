@@ -136,7 +136,7 @@ pv.Scale.quantitative = function() {
   scale.domain = function(array, min, max) {
     if (arguments.length) {
       var o; // the object we use to infer the domain type
-      if (pv.isArray(array)) {
+      if (Array.isArray(array)) {
         if (arguments.length < 2) min = pv.identity;
         if (arguments.length < 3) max = min;
         o = array.length && min(array[0]);
