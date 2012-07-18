@@ -9,11 +9,7 @@
 <div id="qunit"></div>
 <script src="qunit.js"></script>
 <script>
-  // loading sequence test vars
-  var pv_init_order = [], j = 0;
-  setTimeout(function () {
-    pv_init_order.push( k ); // 4. "foo"
-  },10); // 4. "foo"
+  var pv_stats = {};
   // tally all global variables
   var globals = {};
   (function(){
@@ -31,17 +27,7 @@
       .strokeStyle("black")
       .lineWidth(10)
     .root.render();
-</script>
-<script type="text/javascript+protovis">
-  pv_init_order.push( typeof i ); // 1. "undefined"
-  pv_init_order.push( typeof j ); // 2. "number"
-  if (j++ < 10) i = 0; // should not cause script to repeat
-</script>
-<script type="text/javascript+protovis">
-  var k = "foo";
-</script>
-<script type="text/javascript+protovis">
-  pv_init_order.push( typeof k ); // 3. "string"
+  pv_stats.runs_scripts = true;
 </script>
 </div>
 <script>
@@ -56,7 +42,7 @@
   })();
   test("init/load tests", function () {
     deepEqual( pv_globals_defined, [ "pv" ], "globals defined" );
-    deepEqual( pv_init_order, ["undefined", "number", "string", "foo"], "init order" );
+    ok( pv_stats.runs_scripts, "scripts are run" );
   });
 </script>
 <script src="test-core.js"></script>
