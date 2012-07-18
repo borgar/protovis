@@ -1,0 +1,306 @@
+
+<html>
+  <head>
+    <title>Line Chart</title>
+    <script type="text/javascript" src="../../protovis.js"></script>
+    <script>
+    var data = [
+      { "x": 0, "y": 2.2 },
+      { "x": 1, "y": 3.1 },
+      { "x": 2, "y": 3.5 },
+      { "x": 3, "y": 2.5 },
+      { "x": 4, "y": 1.7 },
+      { "x": 5, "y": 1.5 },
+      { "x": 6, "y": 1.8 },
+      { "x": 7, "y": 2.8 },
+      { "x": 8, "y": 3.0 },
+      { "x": 9, "y": 2.8 },
+    ];
+    </script>
+  </head>
+  <body>
+
+<script type="text/javascript+protovis">
+// dash: Rule & Panel
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    .lineDash('2 2')
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .lineDash('5 3 1')
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .lineDash('5 3 1')
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+vis.render();
+
+</script>
+
+<script type="text/javascript+protovis">
+// dash: Line
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+vis.add(pv.Line)
+    .data(data)
+    .left(function(d) x(d.x))
+    .bottom(function(d) y(d.y))
+    .strokeStyle('black')
+    .lineDash('4 2')
+    .lineWidth(2);
+
+vis.render();
+
+</script>
+
+<script type="text/javascript+protovis">
+// dash: Bar
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+vis.add(pv.Bar)
+    .data(data)
+    .left(function(d) x(d.x) - x(0.3))
+    .visible(function() this.index >0 && this.index < 9)
+    .width( x(.6) )
+    .bottom(0)
+    .height(function(d) y(d.y))
+    .strokeStyle('black')
+    .lineWidth(1.5)
+    .lineDash('2 2')
+    .fillStyle('rgba(0,0,0,.2)');
+
+vis.render();
+
+</script>
+
+<script type="text/javascript+protovis">
+// dash: Area
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+vis.add(pv.Area)
+    .data(data)
+    .left(function(d) x(d.x))
+    .bottom(0)
+    .height(function(d) y(d.y))
+    .strokeStyle('black')
+    .lineWidth(1.5)
+    .lineDash('2 2')
+    .fillStyle('rgba(0,0,0,.2)');
+
+vis.render();
+
+</script>
+
+<script type="text/javascript+protovis">
+// dash: Dot
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+vis.add(pv.Dot)
+    .data(data)
+    .left(function(d) x(d.x))
+    .visible(function() this.index >0 && this.index < 9)
+    .size( x(5) )
+    .bottom(function(d) y(d.y))
+    .strokeStyle('black')
+    .lineWidth(1.5)
+    .lineDash('2 2')
+    .fillStyle('rgba(0,0,0,.2)');
+
+vis.render();
+
+</script>
+
+<script type="text/javascript+protovis">
+// dash: Wedge
+var w = 200, h = 200,
+    x = pv.Scale.linear(data, function(d) d.x).range(0, w),
+    y = pv.Scale.linear(0, 4).range(0, h);
+
+var vis = new pv.Panel()
+    .width(w)
+    .height(h)
+    .bottom(20)
+    .left(20)
+    .right(10)
+    .top(5)
+    .strokeStyle('black')
+    .lineWidth(2)
+    ;
+
+vis.add(pv.Rule)
+    .data(y.ticks())
+    .visible(function (s) this.index % 2 )
+    .bottom(y)
+    .strokeStyle("#aaa")
+  .anchor("left").add(pv.Label)
+    .text(function(d) d.toFixed(1));
+
+vis.add(pv.Rule)
+    .data(x.ticks())
+    .visible(function (s) this.index % 2 )
+    .left(x)
+    .strokeStyle("#aaa")
+  .anchor("bottom").add(pv.Label)
+    .text(function(d) d.toFixed());
+
+var total = pv.sum(data, function(d) d.y);
+vis.add(pv.Wedge)
+    .data(data)
+    .outerRadius(x(4))
+    .angle(function (d) {
+      return (d.y / total) * (Math.PI*2)  /*3 / (2 * Math.PI)*/;
+    })
+    .title(function(d) d.y)
+    .fillStyle("rgba(0,0,0,.2)")
+    .strokeStyle("black")
+    .lineWidth(1)
+    .lineDash([2,2])
+    ;
+
+vis.render();
+
+</script>
+
+
+
+  </body>
+</html>

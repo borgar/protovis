@@ -25,6 +25,7 @@ pv.Line = function() {
 pv.Line.prototype = pv.extend(pv.Mark)
     .property("lineWidth", Number)
     .property("lineJoin", String)
+    .property("lineDash", String)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color)
     .property("segmented", Boolean)
@@ -40,6 +41,24 @@ pv.Line.prototype.type = "line";
  *
  * @type number
  * @name pv.Line.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the line. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * <p>This property is <i>fixed</i>. See
+ * {@link pv.Mark}.
+ *
+ * @type string
+ * @name pv.Line.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**

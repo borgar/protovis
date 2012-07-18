@@ -31,6 +31,7 @@ pv.Area.prototype = pv.extend(pv.Mark)
     .property("fillStyle", pv.color)
     .property("segmented", Boolean)
     .property("interpolate", String)
+    .property("lineDash", String)
     .property("tension", Number);
 
 pv.Area.prototype.type = "area";
@@ -67,6 +68,25 @@ pv.Area.prototype.type = "area";
  *
  * @type number
  * @name pv.Area.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the perimeter of the area. The default value
+ * of this property is null (solid line), but since the default stroke
+ * style is null, area marks are not stroked by default.
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * <p>This property is <i>fixed</i> for non-segmented areas. See
+ * {@link pv.Mark}.
+ *
+ * @type string
+ * @name pv.Area.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**

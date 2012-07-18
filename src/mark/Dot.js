@@ -24,6 +24,7 @@ pv.Dot.prototype = pv.extend(pv.Mark)
     .property("shape", String)
     .property("angle", Number)
     .property("lineWidth", Number)
+    .property("lineDash", String)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color);
 
@@ -87,6 +88,21 @@ pv.Dot.prototype.type = "dot";
  *
  * @type number
  * @name pv.Dot.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the dot's shape. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Dot.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**

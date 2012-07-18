@@ -30,6 +30,7 @@ pv.Bar = function() {
 pv.Bar.prototype = pv.extend(pv.Mark)
     .property("width", Number)
     .property("height", Number)
+    .property("lineDash", String)
     .property("lineWidth", Number)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color);
@@ -60,6 +61,21 @@ pv.Bar.prototype.type = "bar";
  *
  * @type number
  * @name pv.Bar.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the bar's border. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Bar.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**

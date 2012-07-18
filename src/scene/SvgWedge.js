@@ -57,6 +57,7 @@ pv.SvgScene.wedge = function(scenes) {
         "fill-rule": "evenodd",
         "fill-opacity": fill.opacity || null,
         "stroke": stroke.color,
+        "stroke-dasharray": s.lineDash,
         "stroke-opacity": stroke.opacity || null,
         "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
       });

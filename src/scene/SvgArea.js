@@ -92,6 +92,7 @@ pv.SvgScene.area = function(scenes) {
       "fill": fill.color,
       "fill-opacity": fill.opacity || null,
       "stroke": stroke.color,
+      "stroke-dasharray": s.lineDash,
       "stroke-opacity": stroke.opacity || null,
       "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
     });
@@ -161,6 +162,7 @@ pv.SvgScene.areaSegment = function(scenes) {
         "fill": fill.color,
         "fill-opacity": fill.opacity || null,
         "stroke": stroke.color,
+        "stroke-dasharray": s.lineDash,
         "stroke-opacity": stroke.opacity || null,
         "stroke-width": stroke.opacity ? s1.lineWidth / this.scale : null
       });

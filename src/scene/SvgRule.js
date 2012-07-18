@@ -18,6 +18,7 @@ pv.SvgScene.rule = function(scenes) {
         "y2": s.top + s.height,
         "stroke": stroke.color,
         "stroke-opacity": stroke.opacity,
+        "stroke-dasharray": s.lineDash,
         "stroke-width": s.lineWidth / this.scale
       });
     e = this.append(e, scenes, i);
