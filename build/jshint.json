@@ -1,0 +1,8 @@
+{
+  "maxerr" : 50,
+  "evil": true,
+  "laxbreak": true,
+  "eqnull": true,
+  "shadow": true,
+  "expr": true
+}

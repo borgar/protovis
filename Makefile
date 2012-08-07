@@ -1,103 +1,109 @@
+SRC_DIR = ./src
+
+UGLIFY ?= `which uglifyjs`
+JSLINT ?= `which jshint`
+JSDOC_HOME = "/Library/jsdoc-toolkit"
+
 JS_LANG_FILES = \
-	src/lang/Array.js
+	${SRC_DIR}/lang/Array.js
 
 JS_CORE_FILES = \
-	src/pv.js \
-	src/pv-internals.js \
-	src/lang/init.js \
-	src/text/Format.js \
-	src/text/DateFormat.js \
-	src/text/TimeFormat.js \
-	src/text/NumberFormat.js \
-	src/data/Arrays.js \
-	src/data/Numbers.js \
-	src/data/Objects.js \
-	src/data/Dom.js \
-	src/data/Tree.js \
-	src/data/Nest.js \
-	src/data/Flatten.js \
-	src/data/Vector.js \
-	src/data/Transform.js \
-	src/data/Scale.js \
-	src/data/QuantitativeScale.js \
-	src/data/LinearScale.js \
-	src/data/LogScale.js \
-	src/data/RootScale.js \
-	src/data/OrdinalScale.js \
-	src/data/QuantileScale.js \
-	src/data/Histogram.js \
-	src/color/Color.js \
-	src/color/Colors.js \
-	src/color/Ramp.js \
-	src/scene/SvgScene.js \
-	src/scene/SvgCurve.js \
-	src/scene/SvgArea.js \
-	src/scene/SvgBar.js \
-	src/scene/SvgDot.js \
-	src/scene/SvgImage.js \
-	src/scene/SvgLabel.js \
-	src/scene/SvgLine.js \
-	src/scene/SvgPanel.js \
-	src/scene/SvgRule.js \
-	src/scene/SvgWedge.js \
-	src/mark/Mark.js \
-	src/mark/Anchor.js \
-	src/mark/Area.js \
-	src/mark/Bar.js \
-	src/mark/Dot.js \
-	src/mark/Label.js \
-	src/mark/Line.js \
-	src/mark/Rule.js \
-	src/mark/Panel.js \
-	src/mark/Image.js \
-	src/mark/Wedge.js \
-	src/mark/Ease.js \
-	src/mark/Transition.js \
-	src/mark/Transient.js
+	${SRC_DIR}/pv.js \
+	${SRC_DIR}/pv-internals.js \
+	${SRC_DIR}/lang/init.js \
+	${SRC_DIR}/text/Format.js \
+	${SRC_DIR}/text/DateFormat.js \
+	${SRC_DIR}/text/TimeFormat.js \
+	${SRC_DIR}/text/NumberFormat.js \
+	${SRC_DIR}/data/Arrays.js \
+	${SRC_DIR}/data/Numbers.js \
+	${SRC_DIR}/data/Objects.js \
+	${SRC_DIR}/data/Dom.js \
+	${SRC_DIR}/data/Tree.js \
+	${SRC_DIR}/data/Nest.js \
+	${SRC_DIR}/data/Flatten.js \
+	${SRC_DIR}/data/Vector.js \
+	${SRC_DIR}/data/Transform.js \
+	${SRC_DIR}/data/Scale.js \
+	${SRC_DIR}/data/QuantitativeScale.js \
+	${SRC_DIR}/data/LinearScale.js \
+	${SRC_DIR}/data/LogScale.js \
+	${SRC_DIR}/data/RootScale.js \
+	${SRC_DIR}/data/OrdinalScale.js \
+	${SRC_DIR}/data/QuantileScale.js \
+	${SRC_DIR}/data/Histogram.js \
+	${SRC_DIR}/color/Color.js \
+	${SRC_DIR}/color/Colors.js \
+	${SRC_DIR}/color/Ramp.js \
+	${SRC_DIR}/scene/SvgScene.js \
+	${SRC_DIR}/scene/SvgCurve.js \
+	${SRC_DIR}/scene/SvgArea.js \
+	${SRC_DIR}/scene/SvgBar.js \
+	${SRC_DIR}/scene/SvgDot.js \
+	${SRC_DIR}/scene/SvgImage.js \
+	${SRC_DIR}/scene/SvgLabel.js \
+	${SRC_DIR}/scene/SvgLine.js \
+	${SRC_DIR}/scene/SvgPanel.js \
+	${SRC_DIR}/scene/SvgRule.js \
+	${SRC_DIR}/scene/SvgWedge.js \
+	${SRC_DIR}/mark/Mark.js \
+	${SRC_DIR}/mark/Anchor.js \
+	${SRC_DIR}/mark/Area.js \
+	${SRC_DIR}/mark/Bar.js \
+	${SRC_DIR}/mark/Dot.js \
+	${SRC_DIR}/mark/Label.js \
+	${SRC_DIR}/mark/Line.js \
+	${SRC_DIR}/mark/Rule.js \
+	${SRC_DIR}/mark/Panel.js \
+	${SRC_DIR}/mark/Image.js \
+	${SRC_DIR}/mark/Wedge.js \
+	${SRC_DIR}/mark/Ease.js \
+	${SRC_DIR}/mark/Transition.js \
+	${SRC_DIR}/mark/Transient.js	
 
 JS_LAYOUT_FILES = \
-	src/physics/Particle.js \
-	src/physics/Simulation.js \
-	src/physics/Quadtree.js \
-	src/physics/Force.js \
-	src/physics/ChargeForce.js \
-	src/physics/DragForce.js \
-	src/physics/SpringForce.js \
-	src/physics/Constraint.js \
-	src/physics/CollisionConstraint.js \
-	src/physics/PositionConstraint.js \
-	src/physics/BoundConstraint.js \
-	src/layout/Layout.js \
-	src/layout/Network.js \
-	src/layout/Hierarchy.js \
-	src/layout/Grid.js \
-	src/layout/Stack.js \
-	src/layout/Treemap.js \
-	src/layout/Tree.js \
-	src/layout/Indent.js \
-	src/layout/Pack.js \
-	src/layout/Force.js \
-	src/layout/Cluster.js \
-	src/layout/Partition.js \
-	src/layout/Arc.js \
-	src/layout/Horizon.js \
-	src/layout/Rollup.js \
-	src/layout/Matrix.js \
-	src/layout/Bullet.js \
-	src/behavior/Behavior.js \
-	src/behavior/Drag.js \
-	src/behavior/Point.js \
-	src/behavior/Select.js \
-	src/behavior/Resize.js \
-	src/behavior/Pan.js \
-	src/behavior/Zoom.js
+	${SRC_DIR}/physics/Particle.js \
+	${SRC_DIR}/physics/Simulation.js \
+	${SRC_DIR}/physics/Quadtree.js \
+	${SRC_DIR}/physics/Force.js \
+	${SRC_DIR}/physics/ChargeForce.js \
+	${SRC_DIR}/physics/DragForce.js \
+	${SRC_DIR}/physics/SpringForce.js \
+	${SRC_DIR}/physics/Constraint.js \
+	${SRC_DIR}/physics/CollisionConstraint.js \
+	${SRC_DIR}/physics/PositionConstraint.js \
+	${SRC_DIR}/physics/BoundConstraint.js \
+	${SRC_DIR}/layout/Layout.js \
+	${SRC_DIR}/layout/Network.js \
+	${SRC_DIR}/layout/Hierarchy.js \
+	${SRC_DIR}/layout/Grid.js \
+	${SRC_DIR}/layout/Stack.js \
+	${SRC_DIR}/layout/Treemap.js \
+	${SRC_DIR}/layout/Tree.js \
+	${SRC_DIR}/layout/Indent.js \
+	${SRC_DIR}/layout/Pack.js \
+	${SRC_DIR}/layout/Force.js \
+	${SRC_DIR}/layout/Cluster.js \
+	${SRC_DIR}/layout/Partition.js \
+	${SRC_DIR}/layout/Arc.js \
+	${SRC_DIR}/layout/Horizon.js \
+	${SRC_DIR}/layout/Rollup.js \
+	${SRC_DIR}/layout/Matrix.js \
+	${SRC_DIR}/layout/Bullet.js \
+	${SRC_DIR}/behavior/Behavior.js \
+	${SRC_DIR}/behavior/Drag.js \
+	${SRC_DIR}/behavior/Point.js \
+	${SRC_DIR}/behavior/Select.js \
+	${SRC_DIR}/behavior/Resize.js \
+	${SRC_DIR}/behavior/Pan.js \
+	${SRC_DIR}/behavior/Zoom.js
 
 JS_GEO_FILES = \
-	src/geo/Geo.js \
-	src/geo/LatLng.js \
-	src/geo/Projection.js \
-	src/geo/Projections.js \
-	src/geo/GeoScale.js
+	${SRC_DIR}/geo/Geo.js \
+	${SRC_DIR}/geo/LatLng.js \
+	${SRC_DIR}/geo/Projection.js \
+	${SRC_DIR}/geo/Projections.js \
+	${SRC_DIR}/geo/GeoScale.js
 
 JS_FILES = \
 	$(JS_LANG_FILES) \
@@ -105,30 +111,42 @@ JS_FILES = \
 	$(JS_LAYOUT_FILES) \
 	$(JS_GEO_FILES)
 
-JS_COMPILER = \
-	java -jar lib/google-compiler/compiler-20100201.jar \
-	--charset UTF-8 \
-	--warning_level=QUIET
 
-JSDOC_HOME = /Library/jsdoc-toolkit
-JSDOC = java -jar $(JSDOC_HOME)/jsrun.jar $(JSDOC_HOME)/app/run.js
+all: protovis min
 
-all: protovis.js protovis.min.js
+pv: protovis
+protovis: protovis.js
+min: protovis.min.js
+
+
+lint: protovis.js
+	@@if test ! -z ${JSLINT}; then \
+		echo "Checking against JSHint..."; \
+		${JSLINT} $(JS_FILES) --config ./build/jshint.json; \
+	else \
+		echo "You must have JSHn installed in order to test."; \
+	fi
+
 
 protovis.js: $(JS_FILES) Makefile
-	grep '	' -Hn $(filter %.js,$^) && echo "ERROR: tab" && exit 1 || true
-	grep '^M' -Hn $(filter %.js,$^) && echo "ERROR: dos newline" && exit 1 || true
-	grep ' $$' -Hn $(filter %.js,$^) && echo "ERROR: trailing space" && exit 1 || true
-	rm -f $@
-	cat $(JS_FILES) >> $@
+	@@echo "Building" $@
+	@@cat $(JS_FILES) > $@
 
-protovis.min.js: protovis.js Makefile
-	rm -f $@
-	cat $< | $(JS_COMPILER) >> $@
 
-jsdoc: $(JS_FILES) Makefile
-	rm -rf jsdoc
-	$(JSDOC) -a -t=$(JSDOC_HOME)/templates/jsdoc -d=$@ -E="^pv-" $(JS_FILES)
+%.min.js: %.js Makefile
+	@@if test ! -z ${UGLIFY}; then \
+		echo "Building" $@; \
+		${UGLIFY} < $< > $@; \
+	else \
+		echo "You must have ${UGLIFY} installed in order to minify the library."; \
+	fi
 
+#jsdoc: $(JS_FILES) Makefile
+#   rm -rf jsdoc
+#   java -jar $(JSDOC_HOME)/jsrun.jar $(JSDOC_HOME)/app/run.js -a -t=$(JSDOC_HOME)/templates/jsdoc -d=$@ -E="^pv-" $(JS_FILES)
+ 
 clean:
 	rm -rf protovis.js protovis.min.js jsdoc
+
+
+.PHONY: all pv protovis lint min clean
