@@ -110,6 +110,22 @@ if (!Array.prototype.reduce) Array.prototype.reduce = function(f, v) {
   }
   return v;
 };
+
+/**
+ * Test if an object is a true array. Implemented in ECMAScript 5.
+ *
+ * @function
+ * @name Array.isArray
+ * @see <a
+ * href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/isArray">isArray</a>
+ * documentation.
+ * @param [obj] The object to be checked
+ */
+if ( !Array.isArray ) {
+  Array.isArray = function (obj) {
+    return Object.prototype.toString.call(obj) == '[object Array]';
+  };
+}
 /**
  * The top-level Protovis namespace. All public methods and fields should be
  * registered on this object. Note that core Protovis source is surrounded by an
@@ -122,12 +138,27 @@ if (!Array.prototype.reduce) Array.prototype.reduce = function(f, v) {
 var pv = {};
 
 /**
- * Protovis version number. See <a href="http://semver.org">semver.org</a>.
+ * Protovis major and minor version numbers.
  *
- * @type string
- * @constant
+ * @namespace Protovis major and minor version numbers.
  */
-pv.version = "3.3.1";
+pv.version = {
+  /**
+   * The major version number.
+   *
+   * @type number
+   * @constant
+   */
+  major: 3,
+
+  /**
+   * The minor version number.
+   *
+   * @type number
+   * @constant
+   */
+  minor: 3
+};
 
 /**
  * Returns the passed-in argument, <tt>x</tt>; the identity function. This method
@@ -358,10 +389,6 @@ pv.functor = function(v) {
   return typeof v == "function" ? v : function() { return v; };
 };
 
-/** @private Returns true if <i>a</i> is a JavaScript Array object. */
-pv.isArray = function(a) {
-  return !!a && Object.prototype.toString.call(a) === "[object Array]";
-};
 /*
  * Parses the Protovis specifications on load, allowing the use of JavaScript
  * 1.8 function expressions on browsers that only support JavaScript 1.6.
@@ -454,6 +481,23 @@ pv.Format.re = function(s) {
 };
 
 /**
+ * @private Given a regular expression string this methods returns a regular
+ * expression object. The string is passed through unescaped.
+ *
+ * @param {string} p a string pattern to compile.
+ * @param {string} flags a string of match modifier flags.
+ * @returns {string} RegExp object.
+ */
+pv.Format.re.compile = function(p, flags) {
+  var key = p + '/' + flags;
+  if ( !pv.Format.re.$cache[ key ] ) {
+    pv.Format.re.$cache[ key ] = new RegExp( p, flags || "" );
+  }
+  return pv.Format.re.$cache[ key ];
+};
+pv.Format.re.$cache = {};
+
+/**
  * @private Optionally pads the specified string <i>s</i> so that it is at least
  * <i>n</i> characters long, using the padding character <i>c</i>.
  *
@@ -464,7 +508,7 @@ pv.Format.re = function(s) {
  */
 pv.Format.pad = function(c, n, s) {
   var m = n - String(s).length;
-  return (m < 1) ? s : new Array(m + 1).join(c) + s;
+  return (m < 1) ? s : Array(m + 1).join(c) + s;
 };
 /**
  * Constructs a new date format with the specified string pattern.
@@ -482,52 +526,53 @@ pv.Format.pad = function(c, n, s) {
  * <li>%d - day of month [01,31] (zero padded).</li>
  * <li>%D - same as %m/%d/%y.</li>
  * <li>%e - day of month [ 1,31] (space padded).</li>
+ * <li>%f - milliseconds [000,999].</li>
+ * <li>%F - same as %Y-%m-%d.</li>
+ * <li>%g - ISO 8601 year without century [00,99].</li>
+ * <li>%G - ISO 8601 year with century.</li>
  * <li>%h - same as %b.</li>
  * <li>%H - hour (24-hour clock) [00,23] (zero padded).</li>
  * <li>%I - hour (12-hour clock) [01,12] (zero padded).</li>
+ * <li>%j - day number [1,366].</li>
+ * <li>%k - hour (24-hour clock) [0,23].</li>
+ * <li>%l - hour (12-hour clock) [1,12].</li>
  * <li>%m - month number [01,12] (zero padded).</li>
  * <li>%M - minute [0,59] (zero padded).</li>
  * <li>%n - newline character.</li>
- * <li>%p - locale's equivalent of a.m. or p.m.</li>
+ * <li>%p - locale's equivalent of a.m. or p.m. [AM,PM].</li>
+ * <li>%P - like %p but in lowercase [am,pm].</li>
+ * <li>%q - quarter of the year [1,4].</li>
+ * <li>%Q - milliseconds [000,999] (zero padded).</li>
  * <li>%r - same as %I:%M:%S %p.</li>
  * <li>%R - same as %H:%M.</li>
+ * <li>%s - number of seconds since unix Epoch.</li>
  * <li>%S - second [00,61] (zero padded).</li>
  * <li>%t - tab character.</li>
  * <li>%T - same as %H:%M:%S.</li>
+ * <li>%u - ISO 8601 weekday number [1,7].</li>
+ * <li>%U - week number [00,53].</li>
+ * <li>%V - ISO 8601 week number [01,53].</li>
+ * <li>%w - weekday number [0,6].</li>
+ * <li>%W - week number [00,53].</li>
  * <li>%x - same as %m/%d/%y.</li>
  * <li>%X - same as %I:%M:%S %p.</li>
  * <li>%y - year with century [00,99] (zero padded).</li>
  * <li>%Y - year including century.</li>
- * <li>%% - %.</li>
- *
- * </ul>The following conversion specifications are currently <i>unsupported</i>
- * for formatting:<ul>
- *
- * <li>%j - day number [1,366].</li>
- * <li>%u - weekday number [1,7].</li>
- * <li>%U - week number [00,53].</li>
- * <li>%V - week number [01,53].</li>
- * <li>%w - weekday number [0,6].</li>
- * <li>%W - week number [00,53].</li>
+ * <li>%z - time-zone hour offset from GMT.</li>
  * <li>%Z - timezone name or abbreviation.</li>
+ * <li>%% - %.</li>
  *
  * </ul>In addition, the following conversion specifications are currently
  * <i>unsupported</i> for parsing:<ul>
  *
  * <li>%a - day of week, either abbreviated or full name.</li>
  * <li>%A - same as %a.</li>
- * <li>%c - locale's appropriate date and time.</li>
- * <li>%C - century number.</li>
- * <li>%D - same as %m/%d/%y.</li>
- * <li>%I - hour (12-hour clock) [1,12].</li>
- * <li>%n - any white space.</li>
- * <li>%p - locale's equivalent of a.m. or p.m.</li>
- * <li>%r - same as %I:%M:%S %p.</li>
- * <li>%R - same as %H:%M.</li>
- * <li>%t - same as %n.</li>
- * <li>%T - same as %H:%M:%S.</li>
- * <li>%x - locale's equivalent to %m/%d/%y.</li>
- * <li>%X - locale's equivalent to %I:%M:%S %p.</li>
+ * <li>%A - same as %a.</li>
+ * <li>%U - week number [00,53].</li>
+ * <li>%w - weekday number [0,6].</li>
+ * <li>%W - week number [00,53].</li>
+ * <li>%z - time-zone hour offset from GMT.</li>
+ * <li>%Z - timezone name or abbreviation.</li>
  *
  * </ul>
  *
@@ -543,65 +588,69 @@ pv.Format.pad = function(c, n, s) {
 pv.Format.date = function(pattern) {
   var pad = pv.Format.pad;
 
+  // expand shorthand notation
+  pattern = pattern.replace( /%F/g, '%Y-%m-%d' )
+                   .replace( /%[Dx]/g, '%m/%d/%y' )
+                   .replace( /%[Xr]/g, '%I:%M:%S %p' )
+                   .replace( /%R/g, '%H:%M' )
+                   .replace( /%T/g, '%H:%M:%S' )
+                   ;
+
   /** @private */
   function format(d) {
+    // invalid dates will crash array lookups
+    if ( isNaN(d) ) { return '☹'; }
+    // format date
     return pattern.replace(/%[a-zA-Z0-9]/g, function(s) {
         switch (s) {
-          case '%a': return [
-              "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-            ][d.getDay()];
-          case '%A': return [
-              "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-              "Saturday"
-            ][d.getDay()];
+          case '%a': return format.days[d.getUTCDay()].substring(0,3);
+          case '%A': return format.days[d.getUTCDay()];
           case '%h':
-          case '%b': return [
-              "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
-              "Oct", "Nov", "Dec"
-            ][d.getMonth()];
-          case '%B': return [
-              "January", "February", "March", "April", "May", "June", "July",
-              "August", "September", "October", "November", "December"
-            ][d.getMonth()];
+          case '%b': return format.months[d.getUTCMonth()].substring(0,3);
+          case '%B': return format.months[d.getUTCMonth()];
           case '%c': return d.toLocaleString();
-          case '%C': return pad("0", 2, Math.floor(d.getFullYear() / 100) % 100);
-          case '%d': return pad("0", 2, d.getDate());
-          case '%x':
-          case '%D': return pad("0", 2, d.getMonth() + 1)
-                    + "/" + pad("0", 2, d.getDate())
-                    + "/" + pad("0", 2, d.getFullYear() % 100);
-          case '%e': return pad(" ", 2, d.getDate());
-          case '%H': return pad("0", 2, d.getHours());
-          case '%I':
-            var t = d.getHours() % 12;
-            return t ? pad("0", 2, t) : 12;
-          // TODO %j: day of year as a decimal number [001,366]
-          case '%m': return pad("0", 2, d.getMonth() + 1);
-          case '%M': return pad("0", 2, d.getMinutes());
+          case '%C': return pad("0", 2, Math.floor(d.getUTCFullYear() / 100) % 100);
+          case '%d': return pad("0", 2, d.getUTCDate());
+          // case %D: shorthand, see above
+          case '%f':
+          case '%Q': return pad("0", 3, d.getUTCMilliseconds());
+          case '%e': return pad(" ", 2, d.getUTCDate());
+          // case %F: shorthand, see above
+          case '%g': return pad("0", 2, format.isocalendar(d)[0] % 100);
+          case '%G': return pad("0", 4, format.isocalendar(d)[0]);
+          case '%H': return pad("0", 2, d.getUTCHours());
+          case '%I': return pad("0", 2, d.getUTCHours() % 12 || 12);
+          case '%j': return pad("0", 3, Math.floor(( d - Date.UTC( d.getUTCFullYear(), 0, 1 ) ) / 864e5 ) + 1);
+          case '%k': return d.getUTCHours();
+          case '%l': return d.getUTCHours() % 12 || 12;
+          case '%m': return pad("0", 2, d.getUTCMonth() + 1);
+          case '%M': return pad("0", 2, d.getUTCMinutes());
           case '%n': return "\n";
-          case '%p': return d.getHours() < 12 ? "AM" : "PM";
-          case '%T':
-          case '%X':
-          case '%r':
-            var h = d.getHours() % 12;
-            return (h ? pad("0", 2, h) : 12)
-                    + ":" + pad("0", 2, d.getMinutes())
-                    + ":" + pad("0", 2, d.getSeconds())
-                    + " " + (d.getHours() < 12 ? "AM" : "PM");
-          case '%R': return pad("0", 2, d.getHours()) + ":" + pad("0", 2, d.getMinutes());
-          case '%S': return pad("0", 2, d.getSeconds());
-          case '%Q': return pad("0", 3, d.getMilliseconds());
+          case '%p': return d.getUTCHours() < 12 ? "AM" : "PM";
+          case '%P': return d.getUTCHours() < 12 ? "am" : "pm";
+          case '%q': return Math.floor( d.getUTCMonth() / 3 ) + 1;
+          // case %r: shorthand, see above
+          // case %R: shorthand, see above
+          case '%s': return ~~( d / 1000 );
+          case '%S': return pad("0", 2, d.getUTCSeconds());
           case '%t': return "\t";
-          case '%u':
-            var w = d.getDay();
-            return w ? w : 1;
-          // TODO %U: week number (sunday first day) [00,53]
-          // TODO %V: week number (monday first day) [01,53] ... with weirdness
-          case '%w': return d.getDay();
-          // TODO %W: week number (monday first day) [00,53] ... with weirdness
-          case '%y': return pad("0", 2, d.getFullYear() % 100);
-          case '%Y': return d.getFullYear();
-          // TODO %Z: timezone name or abbreviation
+          // case %T: shorthand, see above
+          case '%u': return d.getUTCDay() || 7;
+          case '%U':
+            var doy = Math.floor(( d - Date.UTC( d.getUTCFullYear(), 0, 1 ) ) / 864e5 ) + 1;
+            return pad("0", 2, Math.floor((doy + 6 - d.getUTCDay()) / 7));
+          case '%V':
+            return pad("0", 2, format.isocalendar(d)[1]);
+          case '%w': return d.getUTCDay();
+          case '%W':
+            var doy = Math.floor(( d - Date.UTC( d.getUTCFullYear(), 0, 1 ) ) / 864e5 ) + 1;
+            return pad("0", 2, Math.floor((doy + 7 - (d.getUTCDay() || 7)) / 7));
+          // case %x: shorthand, see above
+          // case %X: shorthand, see above
+          case '%y': return pad("0", 2, d.getUTCFullYear() % 100);
+          case '%Y': return d.getUTCFullYear();
+          case '%z': return "+0000";
+          case '%Z': return "UTC";
           case '%%': return "%";
         }
         return s;
@@ -618,6 +667,127 @@ pv.Format.date = function(pattern) {
    */
   format.format = format;
 
+  // Create expression from format pattern and register callbacks for 
+  // each field in the format pattern.
+  var fields = [function(){}],
+      parse_re = pv.Format.re(pattern).replace(/(%[a-zA-Z0-9]|\s+)/g, function(s) {
+        // flexible whitespace
+        if ( /^\s/.test(s) ) { return "\\s+"; }
+        switch (s) {
+          case '%A': // TODO %U: weekday [monday,sunday]
+          case '%a': // TODO %U: weekday [mon,sun]
+            fields.push(function(){});
+            return "([A-Za-z]+)";
+          case '%b': // [jan,dec]
+          case '%h': // [jan,dec]
+          case '%B': // [january,december]
+            fields.push(function(x,d) {
+              x = x.toLowerCase();
+              var m = -1, mn = this.months, l = x.length;
+              while ( ++m < 12 ) {
+                if ( mn[m].substr(0,l).toLowerCase() == x ) {
+                  return (d.month = m);
+                }
+              }
+            });
+            return "([A-Za-z]+)";
+          case '%C': // [00,99]
+            fields.push(function(x,d) { d.year = x * 100 + d.year % 100; });
+            return "(\\d\\d)";
+          case '%e': // [ 1,31]
+            fields.push(function(x,d) { d.date = Number(x); });
+            return "\\s?([12]\\d|3[01]|[1-9])";
+          case '%d': // [01,31]
+            fields.push(function(x,d) { d.date = Number(x); });
+            return "\\s?(0[1-9]|[12]\\d|3[01])";
+          case '%f': // [000,999]([000,999])?
+          case '%Q': // [000,999]([000,999])?
+            fields.push(function(x,d) { d.msec = parseFloat('0.' + x) * 1000; });
+            return "(\\d{3,6})";
+          case '%g': // [00,99] iso year
+            fields.push(function(x,d) {
+              x = Number(x);
+              d.isoyear = x + (x < 69 ? 2000 : 1900);
+            });
+            return "(\\d\\d)";
+          case '%G': // [0000,9999] iso year
+            fields.push(function(x,d) { d.isoyear = Number(x); });
+            return "(\\d{4})";
+          case '%I': // [01,12]
+            fields.push(function(x,d) { d.hour = Number(x); });
+            return "(0?\\d|[12]\\d)";
+          case '%H': // [00,23]
+            fields.push(function(x,d) { d.hour = Number(x); });
+            return "(0?\\d|1\\d|2[0-4])";
+          case '%j': // [001,366]
+            fields.push(function(x,d) { d.month = 0; d.date = Number(x);
+            });
+            return "(\\d{3})";
+          case '%l': // [ 1,12]
+            fields.push(function(x,d) { d.hour = Number(x); });
+            return "\\s?(\\d|1[012])";
+          case '%m': // [01,12]
+            fields.push(function(x,d) { d.month = Number(x)-1; });
+            return "(0?[1-9]|1[012])";
+          case '%M': // [00,59]
+            fields.push(function(x,d) { d.minute = Number(x); });
+            return "(0\\d|[1-5]\\d)";
+          case '%p': // [AM,PM]
+          case '%P': // [am,pm]
+            fields.push(function(x,d) {
+              d.hour = (d.hour % 12) + (/^a\.?m$/i.test(x) ? 0 : 12);
+            });
+            return "([ap]\\.?m|[AP]\\.?M)\\.?";
+          case '%q': // [1,4]
+            fields.push(function(x,d) {
+              d.date = 1;
+              d.month = (Number(x) - 1) * 3;
+            });
+            return "(\\d)";
+          case '%s':
+            fields.push(function(x,d) { d.ts = x * 1000; });
+            return "(-?\\d+)";
+          case '%S':
+            fields.push(function(x,d) { d.second = Number(x); });
+            return "(0\\d|[1-5]\\d|6[01])";
+          case "%n": // "\n"
+          case "%t": // "\t"
+            return "\\s*";
+          case "%U": // TODO %U: week number [00,53]
+            fields.push(function(){});
+            return "(0?\\d|[1-4]\\d|5[0-3])";
+          case "%u": // iso weekday [1,7]
+            fields.push(function (x,d) { d.isoday = Number(x); });
+            return '([1-7])';
+          case '%V':
+            fields.push(function(x,d) { d.isoweek = Number(x); });
+            return "(0[1-9]|[1-4]\\d|5[0-3])";
+          case "%w": // weekday [0,6]
+            fields.push(function(){});
+            return '([0-6])';
+          case '%W': // TODO %W: week number [00,53]
+            fields.push(function(){});
+            return "(0?\\d|[1-4]\\d|5[0-3])";
+          case '%y': // [00,99]
+            fields.push(function(x,d) {
+              x = Number(x);
+              d.year = x + (x < 69 ? 2000 : 1900);
+            });
+            return "(\\d\\d)";
+          case '%Y': // [0000,9999]
+            fields.push(function(x,d) { d.year = Number(x); });
+            return "(\\d{4})";
+          case '%z':
+          case '%Z':
+            fields.push(function(){});
+            return "([+-]\\d{4}|GMT|[CEP]ST|UTC|Z)";
+          case '%%': // "%"
+            return "%";
+        }
+        return s;
+      });
+
+
   /**
    * Parses a date from a string using the associated formatting pattern.
    *
@@ -627,89 +797,52 @@ pv.Format.date = function(pattern) {
    * @returns {Date} the parsed date.
    */
   format.parse = function(s) {
-    var year = 1970, month = 0, date = 1, hour = 0, minute = 0, second = 0;
-    var fields = [function() {}];
+    var match = s.match(parse_re);
+    if ( match ) {
+      var d = {
+        msec: 0,
+        second: 0,
+        minute: 0,
+        hour: 0,
+        date: 1,
+        month: 0,
+        year: 1970,
+        isoyear: null,
+        isoweek: null,
+        isoday: null,
+        ts: null
+      };
+      match.forEach(function(m, i) { fields[i].call(format, m, d); });
+      // have timestamp
+      if ( d.ts !== null ) { return new Date(d.ts); }
+      // convert iso
+      if ( d.isoyear !== null && d.isoweek !== null ) {
+        var iy = new Date(Date.UTC(d.isoyear, 0, 3));
+        d.year = d.isoyear;
+        d.month = 0;
+        d.date = 3 - iy.getUTCDay() + (d.isoweek - 1) * 7 + (d.isoday || 1);
+      }
+      return new Date(Date.UTC(d.year, d.month, d.date, d.hour, d.minute, d.second, d.msec));
+    }
+    return new Date('?'); // Invalid Date
+  };
 
-    /* Register callbacks for each field in the format pattern. */
-    var re = pv.Format.re(pattern).replace(/%[a-zA-Z0-9]/g, function(s) {
-        switch (s) {
-          // TODO %a: day of week, either abbreviated or full name
-          // TODO %A: same as %a
-          case '%b':
-            fields.push(function(x) { month = {
-                  Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7,
-                  Sep: 8, Oct: 9, Nov: 10, Dec: 11
-                }[x]; });
-            return "([A-Za-z]+)";
-          case '%h':
-          case '%B':
-            fields.push(function(x) { month = {
-                  January: 0, February: 1, March: 2, April: 3, May: 4, June: 5,
-                  July: 6, August: 7, September: 8, October: 9, November: 10,
-                  December: 11
-                }[x]; });
-            return "([A-Za-z]+)";
-          // TODO %c: locale's appropriate date and time
-          // TODO %C: century number[0,99]
-          case '%e':
-          case '%d':
-            fields.push(function(x) { date = x; });
-            return "([0-9]+)";
-          // TODO %D: same as %m/%d/%y
-          case '%I':
-          case '%H':
-            fields.push(function(x) { hour = x; });
-            return "([0-9]+)";
-          // TODO %j: day number [1,366]
-          case '%m':
-            fields.push(function(x) { month = x - 1; });
-            return "([0-9]+)";
-          case '%M':
-            fields.push(function(x) { minute = x; });
-            return "([0-9]+)";
-          // TODO %n: any white space
-          // TODO %p: locale's equivalent of a.m. or p.m.
-          case '%p': // TODO this is a hack
-            fields.push(function(x) {
-              if (hour == 12) {
-                if (x == "am") hour = 0;
-              } else if (x == "pm") {
-                hour = Number(hour) + 12;
-              }
-            });
-            return "(am|pm)";
-          // TODO %r: %I:%M:%S %p
-          // TODO %R: %H:%M
-          case '%S':
-            fields.push(function(x) { second = x; });
-            return "([0-9]+)";
-          // TODO %t: any white space
-          // TODO %T: %H:%M:%S
-          // TODO %U: week number [00,53]
-          // TODO %w: weekday [0,6]
-          // TODO %W: week number [00, 53]
-          // TODO %x: locale date (%m/%d/%y)
-          // TODO %X: locale time (%I:%M:%S %p)
-          case '%y':
-            fields.push(function(x) {
-                x = Number(x);
-                year = x + (((0 <= x) && (x < 69)) ? 2000
-                    : (((x >= 69) && (x < 100) ? 1900 : 0)));
-              });
-            return "([0-9]+)";
-          case '%Y':
-            fields.push(function(x) { year = x; });
-            return "([0-9]+)";
-          case '%%':
-            fields.push(function() {});
-            return "%";
-        }
-        return s;
-      });
+  // allow overwriting the month/days
+  // FIXME: replace with a translation hook
+  format.months = [ "January", "February", "March", "April", "May", "June", "July",
+                    "August", "September", "October", "November", "December" ];
+  format.days   = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+                    "Saturday" ];
 
-    var match = s.match(re);
-    if (match) match.forEach(function(m, i) { fields[i](m); });
-    return new Date(year, month, date, hour, minute, second);
+  /** @private */
+  format.isocalendar = function ( dt ) {
+    var d = dt.getUTCDay(),
+        t = new Date( dt * 1 );
+    t.setDate( t.getDate() - ((d + 6) % 7) + 3 );
+    var iso_year = t.getUTCFullYear(),
+        w = Math.floor( (t.getTime() - Date.UTC(iso_year, 0, 1, -6)) / 864e5 );
+    // return a 3-tuple, (ISO year, ISO week number, ISO weekday).
+    return [ iso_year, 1+Math.floor(w/7), d||7 ];
   };
 
   return format;
@@ -849,32 +982,61 @@ pv.Format.number = function() {
       maxf = 0, // default maximum fraction digits
       maxk = 1, // 10^maxf
       padi = "0", // default integer pad
+      padistr = "",
       padf = "0", // default fraction pad
+      padfstr = "",
       padg = true, // whether group separator affects integer padding
       decimal = ".", // default decimal separator
       group = ",", // default group separator
       np = "\u2212", // default negative prefix
-      ns = ""; // default negative suffix
+      ns = "", // default negative suffix
+      sym = true; // default symmetrical number rounding
 
   /** @private */
   function format(x) {
-    /* Round the fractional part, and split on decimal separator. */
-    if (Infinity > maxf) x = Math.round(x * maxk) / maxk;
-    var s = String(Math.abs(x)).split(".");
-
-    /* Pad, truncate and group the integral part. */
-    var i = s[0];
-    if (i.length > maxi) i = i.substring(i.length - maxi);
-    if (padg && (i.length < mini)) i = new Array(mini - i.length + 1).join(padi) + i;
-    if (i.length > 3) i = i.replace(/\B(?=(?:\d{3})+(?!\d))/g, group);
-    if (!padg && (i.length < mins)) i = new Array(mins - i.length + 1).join(padi) + i;
-    s[0] = x < 0 ? np + i + ns : i;
-
-    /* Pad the fractional part. */
-    var f = s[1] || "";
-    if (f.length < minf) s[1] = f + new Array(minf - f.length + 1).join(padf);
-
-    return s.join(decimal);
+    // Round the fractional part, and split on decimal separator.
+    if ( Infinity > maxf ) {
+      x = (x < 0 && sym) ? -Math.round(-x * maxk) / maxk : Math.round(x * maxk) / maxk;
+    }
+    // Pad, truncate and group the integral part.
+    var neg = (x < 0),
+        pad = '',
+        d = '',
+        f = '',
+        s = String(Math.abs(x)).split("."),
+        l = s[0].length,
+        n = Math.floor(Math.abs(x));
+    // truncate the int if it overflows max int digits
+    if ( l > maxi ) {
+      n = Number(s[0].substring(l - maxi));
+      l = maxi;
+    }
+    // pad the integer if it doesn't reach min integer digits (group doesn't affect)
+    if ( padg && (l < mini) ) {
+      pad = padistr.substring(0, mini - l);
+    }
+    // digit grouping
+    var c, i = '';
+    do {
+      c = ( n % 1000 );
+      n = Math.floor( n / 1000 );
+      i = ( n ? group : '' ) +
+          ( c < 100 && n ? '0' : '' ) +
+          ( c <  10 && n ? '0' : '' ) +
+          ( c + i );
+      n && ++l;
+    } while ( n );
+    // pad the integer if it doesn't reach min integer digits (group affects)
+    if ( !padg && (l < mins) ) {
+      pad = padistr.substring(0, mins - l);
+    }
+    // Pad the fractional part.
+    if ( x % 1 ) {
+      d = decimal;
+      f = s[1] + padfstr.substring(0, minf - s[1].length);
+    }
+    return ( neg ) ? np + pad + i + d + f + ns
+                   :      pad + i + d + f;
   }
 
   /**
@@ -899,15 +1061,16 @@ pv.Format.number = function() {
    */
   format.parse = function(x) {
     var re = pv.Format.re;
+        compile = re.compile;
 
     /* Remove leading and trailing padding. Split on the decimal separator. */
     var s = String(x)
-        .replace(new RegExp("^(" + re(padi) + ")*"), "")
-        .replace(new RegExp("(" + re(padf) + ")*$"), "")
+        .replace(compile("^(?:" + re(padi) + ")*"), "")
+        .replace(compile("(?:" + re(padf) + ")*$"), "")
         .split(decimal);
 
     /* Remove grouping and truncate the integral part. */
-    var i = s[0].replace(new RegExp(re(group), "g"), "");
+    var i = s[0].replace(compile(re(group), "g"), "");
     if (i.length > maxi) i = i.substring(i.length - maxi);
 
     /* Round the fractional part. */
@@ -940,6 +1103,7 @@ pv.Format.number = function() {
       mini = Number(min);
       maxi = (arguments.length > 1) ? Number(max) : mini;
       mins = mini + Math.floor(mini / 3) * group.length;
+      padistr = pv.Format.pad(padi, mini, ''); // precalc padding
       return this;
     }
     return [mini, maxi];
@@ -968,6 +1132,7 @@ pv.Format.number = function() {
       minf = Number(min);
       maxf = (arguments.length > 1) ? Number(max) : minf;
       maxk = Math.pow(10, maxf);
+      padfstr = pv.Format.pad(padf, minf, ''); // precalc padding
       return this;
     }
     return [minf, maxf];
@@ -984,6 +1149,7 @@ pv.Format.number = function() {
   format.integerPad = function(x) {
     if (arguments.length) {
       padi = String(x);
+      padistr = pv.Format.pad(padi, mini, ''); // precalc padding
       padg = /\d/.test(padi);
       return this;
     }
@@ -1001,6 +1167,7 @@ pv.Format.number = function() {
   format.fractionPad = function(x) {
     if (arguments.length) {
       padf = String(x);
+      padfstr = pv.Format.pad(padf, minf, ''); // precalc padding
       return this;
     }
     return padf;
@@ -1036,6 +1203,23 @@ pv.Format.number = function() {
       return this;
     }
     return group;
+  };
+
+  /**
+   * Sets or gets whether the rounding method used is symmetrical or asymmetrical.
+   * The default method is symmetrical (rounded away from zero). If this is set to
+   * false then then rounding is asymmetrical (rounded "up": away from zero if positive,
+   * toward zero if negative).
+   *
+   * @param {boolean} [x] new setting for symmetry.
+   * @returns {pv.Format.number} <tt>this</tt> or the current state of round method.
+   */
+  format.symmetricRounding = function(x) {
+    if (arguments.length) {
+      sym = !!x;
+      return this;
+    }
+    return !!x;
   };
 
   /**
@@ -1142,7 +1326,7 @@ pv.transpose = function(arrays) {
   if (m > n) {
     arrays.length = m;
     for (var i = n; i < m; i++) {
-      arrays[i] = new Array(n);
+      arrays[i] = Array(n);
     }
     for (var i = 0; i < n; i++) {
       for (var j = i + 1; j < m; j++) {
@@ -1215,7 +1399,7 @@ pv.normalize = function(array, f) {
  */
 pv.permute = function(array, indexes, f) {
   if (!f) f = pv.identity;
-  var p = new Array(indexes.length), o = {};
+  var p = Array(indexes.length), o = {};
   indexes.forEach(function(j, i) { o.index = j; p[i] = f.call(o, array[j]); });
   return p;
 };
@@ -2444,7 +2628,7 @@ pv.Nest.prototype.entries = function() {
     var array = [];
     for (var k in map) {
       var v = map[k];
-      array.push({ key: k, values: pv.isArray(v) ? v : entries(v) });
+      array.push({ key: k, values: Array.isArray(v) ? v : entries(v) });
     }
     return array;
   }
@@ -2486,7 +2670,7 @@ pv.Nest.prototype.rollup = function(f) {
   function rollup(map) {
     for (var key in map) {
       var value = map[key];
-      if (pv.isArray(value)) {
+      if (Array.isArray(value)) {
         map[key] = f(value);
       } else {
         rollup(value);
@@ -3094,7 +3278,7 @@ pv.Scale.quantitative = function() {
   scale.domain = function(array, min, max) {
     if (arguments.length) {
       var o; // the object we use to infer the domain type
-      if (pv.isArray(array)) {
+      if (Array.isArray(array)) {
         if (arguments.length < 2) min = pv.identity;
         if (arguments.length < 3) max = min;
         o = array.length && min(array[0]);
@@ -3743,7 +3927,7 @@ pv.Scale.ordinal = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      array = (pv.isArray(array))
+      array = (Array.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
 
@@ -3792,7 +3976,7 @@ pv.Scale.ordinal = function() {
    */
   scale.range = function(array, f) {
     if (arguments.length) {
-      r = (pv.isArray(array))
+      r = (Array.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (typeof r[0] == "string") r = r.map(pv.color);
@@ -4018,7 +4202,7 @@ pv.Scale.quantile = function() {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (pv.isArray(array))
+      d = (Array.isArray(array))
           ? pv.map(array, f)
           : Array.prototype.slice.call(arguments);
       d.sort(pv.naturalOrder);
@@ -5592,6 +5776,7 @@ pv.SvgScene.area = function(scenes) {
       "fill": fill.color,
       "fill-opacity": fill.opacity || null,
       "stroke": stroke.color,
+      "stroke-dasharray": s.lineDash,
       "stroke-opacity": stroke.opacity || null,
       "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
     });
@@ -5661,6 +5846,7 @@ pv.SvgScene.areaSegment = function(scenes) {
         "fill": fill.color,
         "fill-opacity": fill.opacity || null,
         "stroke": stroke.color,
+        "stroke-dasharray": s.lineDash,
         "stroke-opacity": stroke.opacity || null,
         "stroke-width": stroke.opacity ? s1.lineWidth / this.scale : null
       });
@@ -5689,6 +5875,7 @@ pv.SvgScene.bar = function(scenes) {
         "fill": fill.color,
         "fill-opacity": fill.opacity || null,
         "stroke": stroke.color,
+        "stroke-dasharray": s.lineDash,
         "stroke-opacity": stroke.opacity || null,
         "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
       });
@@ -5754,6 +5941,7 @@ pv.SvgScene.dot = function(scenes) {
       "fill-opacity": fill.opacity || null,
       "stroke": stroke.color,
       "stroke-opacity": stroke.opacity || null,
+      "stroke-dasharray": s.lineDash,
       "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
     };
     if (path) {
@@ -5900,6 +6088,7 @@ pv.SvgScene.line = function(scenes) {
       "stroke": stroke.color,
       "stroke-opacity": stroke.opacity || null,
       "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null,
+      "stroke-dasharray": s.lineDash,
       "stroke-linejoin": s.lineJoin
     });
   return this.append(e, scenes, 0);
@@ -6144,6 +6333,7 @@ pv.SvgScene.stroke = function(e, scenes, i) {
         "fill": null,
         "stroke": stroke.color,
         "stroke-opacity": stroke.opacity,
+        "stroke-dasharray": s.lineDash,
         "stroke-width": s.lineWidth / this.scale
       });
     e = this.append(e, scenes, i);
@@ -6170,6 +6360,7 @@ pv.SvgScene.rule = function(scenes) {
         "y2": s.top + s.height,
         "stroke": stroke.color,
         "stroke-opacity": stroke.opacity,
+        "stroke-dasharray": s.lineDash,
         "stroke-width": s.lineWidth / this.scale
       });
     e = this.append(e, scenes, i);
@@ -6235,6 +6426,7 @@ pv.SvgScene.wedge = function(scenes) {
         "fill-rule": "evenodd",
         "fill-opacity": fill.opacity || null,
         "stroke": stroke.color,
+        "stroke-dasharray": s.lineDash,
         "stroke-opacity": stroke.opacity || null,
         "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null
       });
@@ -6458,7 +6650,8 @@ pv.Mark.prototype
     .property("title", String)
     .property("reverse", Boolean)
     .property("antialias", Boolean)
-    .property("events", String);
+    .property("events", String)
+    .property("id", String);
 
 /**
  * The mark type; a lower camelCase name. The type name controls rendering
@@ -6664,6 +6857,15 @@ pv.Mark.prototype.scale = 1;
  */
 
 /**
+ * The instance identifier, for correspondence across animated transitions. If
+ * no identifier is specified, correspondence is determined using the mark
+ * index. Identifiers are not global, but local to a given mark.
+ *
+ * @type String
+ * @name pv.Mark.prototype.id
+ */
+
+/**
  * Default properties for all mark types. By default, the data array is the
  * parent data as a single-element array; if the data property is not specified,
  * this causes each mark to be instantiated as a singleton with the parents
@@ -6765,6 +6967,9 @@ pv.Mark.prototype.anchor = function(name) {
       })
     .visible(function() {
         return this.scene.target[this.index].visible;
+      })
+    .id(function() {
+        return this.scene.target[this.index].id;
       })
     .left(function() {
         var s = this.scene.target[this.index], w = s.width || 0;
@@ -7047,7 +7252,7 @@ pv.Mark.stack = [];
  * do not need to be queried during build.
  */
 pv.Mark.prototype.bind = function() {
-  var seen = {}, types = [[], [], [], []], data, visible;
+  var seen = {}, types = [[], [], [], []], data, required = [];
 
   /** Scans the proto chain for the specified mark. */
   function bind(mark) {
@@ -7059,7 +7264,7 @@ pv.Mark.prototype.bind = function() {
           seen[p.name] = p;
           switch (p.name) {
             case "data": data = p; break;
-            case "visible": visible = p; break;
+            case "visible": case "id": required.push(p); break;
             default: types[p.type].push(p); break;
           }
         }
@@ -7094,7 +7299,7 @@ pv.Mark.prototype.bind = function() {
     properties: seen,
     data: data,
     defs: defs,
-    required: [visible],
+    required: required,
     optional: pv.blend(types)
   };
 };
@@ -7123,7 +7328,7 @@ pv.Mark.prototype.bind = function() {
  * special. The <tt>data</tt> property is evaluated first; unlike the other
  * properties, the data stack is from the parent panel, rather than the current
  * mark, since the data is not defined until the data property is evaluated.
- * The <tt>visisble</tt> property is subsequently evaluated for each instance;
+ * The <tt>visible</tt> property is subsequently evaluated for each instance;
  * only if true will the {@link #buildInstance} method be called, evaluating
  * other properties and recursively building the scene graph.
  *
@@ -7255,7 +7460,7 @@ pv.Mark.prototype.buildImplied = function(s) {
     if (l == null) {
       l = r = (width - w) / 2;
     } else {
-      r = width - w - (l = l || 0);
+      r = width - w - l;
     }
   } else if (l == null) {
     l = width - w - r;
@@ -7269,7 +7474,7 @@ pv.Mark.prototype.buildImplied = function(s) {
     if (t == null) {
       b = t = (height - h) / 2;
     } else {
-      b = height - h - (t = t || 0);
+      b = height - h - t;
     }
   } else if (t == null) {
     t = height - h - b;
@@ -7464,6 +7669,14 @@ pv.Mark.dispatch = function(type, scene, index) {
     });
   return true;
 };
+
+pv.Mark.prototype.transition = function() {
+  return new pv.Transition(this);
+};
+
+pv.Mark.prototype.on = function(state) {
+  return this["$" + state] = new pv.Transient(this);
+};
 /**
  * Constructs a new mark anchor with default properties.
  *
@@ -7578,6 +7791,7 @@ pv.Area.prototype = pv.extend(pv.Mark)
     .property("fillStyle", pv.color)
     .property("segmented", Boolean)
     .property("interpolate", String)
+    .property("lineDash", String)
     .property("tension", Number);
 
 pv.Area.prototype.type = "area";
@@ -7614,6 +7828,25 @@ pv.Area.prototype.type = "area";
  *
  * @type number
  * @name pv.Area.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the perimeter of the area. The default value
+ * of this property is null (solid line), but since the default stroke
+ * style is null, area marks are not stroked by default.
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * <p>This property is <i>fixed</i> for non-segmented areas. See
+ * {@link pv.Mark}.
+ *
+ * @type string
+ * @name pv.Area.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**
@@ -7806,6 +8039,7 @@ pv.Area.prototype.buildInstance = function(s) {
  * @returns {pv.Anchor}
  */
 pv.Area.prototype.anchor = function(name) {
+  var scene;
   return pv.Mark.prototype.anchor.call(this, name)
     .interpolate(function() {
        return this.scene.target[this.index].interpolate;
@@ -7849,6 +8083,7 @@ pv.Bar = function() {
 pv.Bar.prototype = pv.extend(pv.Mark)
     .property("width", Number)
     .property("height", Number)
+    .property("lineDash", String)
     .property("lineWidth", Number)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color);
@@ -7879,6 +8114,21 @@ pv.Bar.prototype.type = "bar";
  *
  * @type number
  * @name pv.Bar.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the bar's border. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Bar.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**
@@ -7936,6 +8186,7 @@ pv.Dot.prototype = pv.extend(pv.Mark)
     .property("shape", String)
     .property("angle", Number)
     .property("lineWidth", Number)
+    .property("lineDash", String)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color);
 
@@ -8002,6 +8253,21 @@ pv.Dot.prototype.type = "dot";
  */
 
 /**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the dot's shape. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Dot.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
+ */
+
+/**
  * The style of stroked lines; used in conjunction with <tt>lineWidth</tt> to
  * stroke the dot's shape. The default value of this property is a categorical
  * color.
@@ -8057,6 +8323,7 @@ pv.Dot.prototype.defaults = new pv.Dot()
  * @returns {pv.Anchor}
  */
 pv.Dot.prototype.anchor = function(name) {
+  var scene;
   return pv.Mark.prototype.anchor.call(this, name)
     .left(function() {
         var s = this.scene.target[this.index];
@@ -8294,6 +8561,7 @@ pv.Line = function() {
 pv.Line.prototype = pv.extend(pv.Mark)
     .property("lineWidth", Number)
     .property("lineJoin", String)
+    .property("lineDash", String)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color)
     .property("segmented", Boolean)
@@ -8309,6 +8577,24 @@ pv.Line.prototype.type = "line";
  *
  * @type number
  * @name pv.Line.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the line. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * <p>This property is <i>fixed</i>. See
+ * {@link pv.Mark}.
+ *
+ * @type string
+ * @name pv.Line.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**
@@ -8513,6 +8799,7 @@ pv.Rule = function() {
 pv.Rule.prototype = pv.extend(pv.Mark)
     .property("width", Number)
     .property("height", Number)
+    .property("lineDash", String)
     .property("lineWidth", Number)
     .property("strokeStyle", pv.color);
 
@@ -8542,6 +8829,21 @@ pv.Rule.prototype.type = "rule";
  *
  * @type number
  * @name pv.Rule.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the rule. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Rule.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**
@@ -9063,6 +9365,7 @@ pv.Wedge.prototype = pv.extend(pv.Mark)
     .property("innerRadius", Number)
     .property("outerRadius", Number)
     .property("lineWidth", Number)
+    .property("lineDash", String)
     .property("strokeStyle", pv.color)
     .property("fillStyle", pv.color);
 
@@ -9119,6 +9422,21 @@ pv.Wedge.prototype.type = "wedge";
  *
  * @type number
  * @name pv.Wedge.prototype.lineWidth
+ */
+
+/**
+ * The dash and gaps pattern of stroked lines, in pixels; used in conjunction 
+ * with <tt>strokeStyle</tt> to stroke the wedge's border. The default value
+ * of this property is null (solid line).
+ *
+ * <p>A pattern is a comma delimited sequence of lengths of alternating dashes and gaps.
+ * If an odd number of values is provided, then the list of values is repeated to
+ * yield an even number of values. 
+ *
+ * @type string
+ * @name pv.Wedge.prototype.lineDash
+ * @see <a href="http://www.w3.org/TR/SVG/painting.html#StrokeDasharrayProperty">SVG dasharray
+ * property</a>
  */
 
 /**
@@ -9276,6 +9594,358 @@ pv.Wedge.prototype.buildImplied = function(s) {
   else if (s.endAngle == null) s.endAngle = s.startAngle + s.angle;
   pv.Mark.prototype.buildImplied.call(this, s);
 };
+/*
+ * TERMS OF USE - EASING EQUATIONS
+ *
+ * Open source under the BSD License.
+ *
+ * Copyright 2001 Robert Penner
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * - Neither the name of the author nor the names of contributors may be used to
+ *   endorse or promote products derived from this software without specific
+ *   prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+pv.Ease = (function() {
+
+  function reverse(f) {
+    return function(t) {
+      return 1 - f(1 - t);
+    };
+  }
+
+  function reflect(f) {
+    return function(t) {
+      return .5 * (t < .5 ? f(2 * t) : (2 - f(2 - 2 * t)));
+    };
+  }
+
+  function poly(e) {
+    return function(t) {
+      return t < 0 ? 0 : t > 1 ? 1 : Math.pow(t, e);
+    }
+  }
+
+  function sin(t) {
+    return 1 - Math.cos(t * Math.PI / 2);
+  }
+
+  function exp(t) {
+    return t ? Math.pow(2, 10 * (t - 1)) - 0.001 : 0;
+  }
+
+  function circle(t) {
+    return -(Math.sqrt(1 - t * t) - 1);
+  }
+
+  function elastic(a, p) {
+    var s;
+    if (!p) p = 0.45;
+    if (!a || a < 1) { a = 1; s = p / 4; }
+    else s = p / (2 * Math.PI) * Math.asin(1 / a);
+    return function(t) {
+      return t <= 0 || t >= 1 ? t
+          : -(a * Math.pow(2, 10 * (--t)) * Math.sin((t - s) * (2 * Math.PI) / p));
+    };
+  }
+
+  function back(s) {
+    if (!s) s = 1.70158;
+    return function(t) {
+      return t * t * ((s + 1) * t - s);
+    };
+  }
+
+  function bounce(t) {
+    return t < 1 / 2.75 ? 7.5625 * t * t
+        : t < 2 / 2.75 ? 7.5625 * (t -= 1.5 / 2.75) * t + .75
+        : t < 2.5 / 2.75 ? 7.5625 * (t -= 2.25 / 2.75) * t + .9375
+        : 7.5625 * (t -= 2.625 / 2.75) * t + .984375;
+  }
+
+  var quad = poly(2),
+      cubic = poly(3),
+      elasticDefault = elastic(),
+      backDefault = back();
+
+  var eases = {
+    "linear": pv.identity,
+    "quad-in": quad,
+    "quad-out": reverse(quad),
+    "quad-in-out": reflect(quad),
+    "quad-out-in": reflect(reverse(quad)),
+    "cubic-in": cubic,
+    "cubic-out": reverse(cubic),
+    "cubic-in-out": reflect(cubic),
+    "cubic-out-in": reflect(reverse(cubic)),
+    "sin-in": sin,
+    "sin-out": reverse(sin),
+    "sin-in-out": reflect(sin),
+    "sin-out-in": reflect(reverse(sin)),
+    "exp-in": exp,
+    "exp-out": reverse(exp),
+    "exp-in-out": reflect(exp),
+    "exp-out-in": reflect(reverse(exp)),
+    "circle-in": circle,
+    "circle-out": reverse(circle),
+    "circle-in-out": reflect(circle),
+    "circle-out-in": reflect(reverse(circle)),
+    "elastic-in": elasticDefault,
+    "elastic-out": reverse(elasticDefault),
+    "elastic-in-out": reflect(elasticDefault),
+    "elastic-out-in": reflect(reverse(elasticDefault)),
+    "back-in": backDefault,
+    "back-out": reverse(backDefault),
+    "back-in-out": reflect(backDefault),
+    "back-out-in": reflect(reverse(backDefault)),
+    "bounce-in": bounce,
+    "bounce-out": reverse(bounce),
+    "bounce-in-out": reflect(bounce),
+    "bounce-out-in": reflect(reverse(bounce))
+  };
+
+  pv.ease = function(f) {
+    return eases[f];
+  };
+
+  return {
+    reverse: reverse,
+    reflect: reflect,
+    linear: function() { return pv.identity; },
+    sin: function() { return sin; },
+    exp: function() { return exp; },
+    circle: function() { return circle; },
+    elastic: elastic,
+    back: back,
+    bounce: bounce,
+    poly: poly
+  };
+})();
+pv.Transition = function(mark) {
+  var that = this,
+      ease = pv.ease("cubic-in-out"),
+      duration = 250,
+      timer;
+
+  var interpolated = {
+    top: 1,
+    left: 1,
+    right: 1,
+    bottom: 1,
+    width: 1,
+    height: 1,
+    innerRadius: 1,
+    outerRadius: 1,
+    radius: 1,
+    startAngle: 1,
+    endAngle: 1,
+    angle: 1,
+    fillStyle: 1,
+    strokeStyle: 1,
+    lineWidth: 1,
+    eccentricity: 1,
+    tension: 1,
+    textAngle: 1,
+    textStyle: 1,
+    textMargin: 1
+  };
+
+  var defaults = new pv.Transient();
+
+  var none = pv.Color.transparent;
+
+  /** @private */
+  function ids(marks) {
+    var map = {};
+    for (var i = 0; i < marks.length; i++) {
+      var mark = marks[i];
+      if (mark.id) map[mark.id] = mark;
+    }
+    return map;
+  }
+
+  /** @private */
+  function interpolateProperty(list, name, before, after) {
+    if (name in interpolated) {
+      var i = pv.Scale.interpolator(before[name], after[name]);
+      var f = function(t) { before[name] = i(t); }
+    } else {
+      var f = function(t) { if (t > .5) before[name] = after[name]; }
+    }
+    f.next = list.head;
+    list.head = f;
+  }
+
+  /** @private */
+  function interpolateInstance(list, before, after) {
+    for (var name in before) {
+      if (name == "children") continue; // not a property
+      if (before[name] == after[name]) continue; // unchanged
+      interpolateProperty(list, name, before, after);
+    }
+    if (before.children) {
+      for (var j = 0; j < before.children.length; j++) {
+        interpolate(list, before.children[j], after.children[j]);
+      }
+    }
+  }
+
+  /** @private */
+  function interpolate(list, before, after) {
+    var mark = before.mark, bi = ids(before), ai = ids(after);
+    for (var i = 0; i < before.length; i++) {
+      var b = before[i], a = b.id ? ai[b.id] : after[i];
+      b.index = i;
+      if (!b.visible) continue;
+      if (!(a && a.visible)) {
+        var o = override(before, i, mark.$exit, after);
+
+        /*
+         * After the transition finishes, we need to do a little cleanup to
+         * insure that the final state of the scenegraph is consistent with the
+         * "after" render. For instances that were removed, we need to remove
+         * them from the scenegraph; for instances that became invisible, we
+         * need to mark them invisible. See the cleanup method for details.
+         */
+        b.transition = a ? 2 : (after.push(o), 1);
+        a = o;
+      }
+      interpolateInstance(list, b, a);
+    }
+    for (var i = 0; i < after.length; i++) {
+      var a = after[i], b = a.id ? bi[a.id] : before[i];
+      if (!(b && b.visible) && a.visible) {
+        var o = override(after, i, mark.$enter, before);
+        if (!b) before.push(o);
+        else before[b.index] = o;
+        interpolateInstance(list, o, a);
+      }
+    }
+  }
+
+  /** @private */
+  function override(scene, index, proto, other) {
+    var s = pv.extend(scene[index]),
+        m = scene.mark,
+        r = m.root.scene,
+        p = (proto || defaults).$properties,
+        t;
+
+    /* Correct the target reference, if this is an anchor. */
+    if (other.target && (t = other.target[other.length])) {
+      scene = pv.extend(scene);
+      scene.target = pv.extend(other.target);
+      scene.target[index] = t;
+    }
+
+    /* Determine the set of properties to evaluate. */
+    var seen = {};
+    for (var i = 0; i < p.length; i++) seen[p[i].name] = 1;
+    p = m.binds.optional
+        .filter(function(p) { return !(p.name in seen); })
+        .concat(p);
+
+    /* Evaluate the properties and update any implied ones. */
+    m.context(scene, index, function() {
+      this.buildProperties(s, p);
+      this.buildImplied(s);
+    });
+
+    /* Restore the root scene. This should probably be done by context(). */
+    m.root.scene = r;
+    return s;
+  }
+
+  /** @private */
+  function cleanup(scene) {
+    for (var i = 0, j = 0; i < scene.length; i++) {
+      var s = scene[i];
+      if (s.transition != 1) {
+        scene[j++] = s;
+        if (s.transition == 2) s.visible = false;
+        if (s.children) s.children.forEach(cleanup);
+      }
+    }
+    scene.length = j;
+  }
+
+  that.ease = function(x) {
+    return arguments.length
+        ? (ease = typeof x == "function" ? x : pv.ease(x), that)
+        : ease;
+  };
+
+  that.duration = function(x) {
+    return arguments.length
+        ? (duration = Number(x), that)
+        : duration;
+  };
+
+  that.start = function() {
+    // TODO allow partial rendering
+    if (mark.parent) fail();
+
+    // TODO allow parallel and sequenced transitions
+    if (mark.$transition) mark.$transition.stop();
+    mark.$transition = that;
+
+    // TODO clearing the scene like this forces total re-build
+    var i = pv.Mark.prototype.index, before = mark.scene, after;
+    mark.scene = null;
+    mark.bind();
+    mark.build();
+    after = mark.scene;
+    mark.scene = before;
+    pv.Mark.prototype.index = i;
+
+    var start = Date.now(), list = {};
+    interpolate(list, before, after);
+    timer = setInterval(function() {
+      var t = Math.max(0, Math.min(1, (Date.now() - start) / duration)),
+          e = ease(t);
+      for (var i = list.head; i; i = i.next) i(e);
+      if (t == 1) {
+        cleanup(mark.scene);
+        that.stop();
+      }
+      pv.Scene.updateAll(before);
+    }, 24);
+  };
+
+  that.stop = function() {
+    clearInterval(timer);
+  };
+};
+pv.Transient = function(mark) {
+  pv.Mark.call(this);
+  this.fillStyle(null).strokeStyle(null).textStyle(null);
+  this.on = function(state) { return mark.on(state); };
+};
+
+pv.Transient.prototype = pv.extend(pv.Mark);
 /**
  * Abstract; not implemented. There is no explicit constructor; this class
  * merely serves to document the attributes that are used on particles in
@@ -15228,7 +15898,7 @@ pv.Geo.scale = function(p) {
    */
   scale.domain = function(array, f) {
     if (arguments.length) {
-      d = (pv.isArray(array))
+      d = (Array.isArray(array))
           ? ((arguments.length > 1) ? pv.map(array, f) : array)
           : Array.prototype.slice.call(arguments);
       if (d.length > 1) {
