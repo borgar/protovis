@@ -154,7 +154,7 @@ jsdoc: $(JS_FILES) Makefile
 	@@$(JSDOC_HOME)/app/run.js -q -a -t=$(JSDOC_HOME)/templates/jsdoc -d=$@ -E="^pv-" $(JS_FILES)
  
 clean:
-	rm -rf protovis.js protovis.min.js jsdoc
+	rm -rf protovis.js protovis.min.js pv.js pv.min.js jsdoc
 
 
 .PHONY: all pv protovis lint min clean mini
