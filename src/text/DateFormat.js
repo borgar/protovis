@@ -86,6 +86,9 @@ pv.Format.date = function(pattern) {
 
   /** @private */
   function format(d) {
+    // invalid dates will crash array lookups
+    if ( isNaN(d) ) { return '☹'; }
+    // format date
     return pattern.replace(/%[a-zA-Z0-9]/g, function(s) {
         switch (s) {
           case '%a': return format.days[d.getUTCDay()].substring(0,3);
@@ -200,10 +203,10 @@ pv.Format.date = function(pattern) {
             return "(\\d{4})";
           case '%I': // [01,12]
             fields.push(function(x,d) { d.hour = Number(x); });
-            return "(0\\d|[12]\\d)";
+            return "(0?\\d|[12]\\d)";
           case '%H': // [00,23]
             fields.push(function(x,d) { d.hour = Number(x); });
-            return "(0\\d|1\\d|2[0-4])";
+            return "(0?\\d|1\\d|2[0-4])";
           case '%j': // [001,366]
             fields.push(function(x,d) { d.month = 0; d.date = Number(x);
             });
@@ -213,7 +216,7 @@ pv.Format.date = function(pattern) {
             return "\\s?(\\d|1[012])";
           case '%m': // [01,12]
             fields.push(function(x,d) { d.month = Number(x)-1; });
-            return "(0[1-9]|1[012])";
+            return "(0?[1-9]|1[012])";
           case '%M': // [00,59]
             fields.push(function(x,d) { d.minute = Number(x); });
             return "(0\\d|[1-5]\\d)";
@@ -240,7 +243,7 @@ pv.Format.date = function(pattern) {
             return "\\s*";
           case "%U": // TODO %U: week number [00,53]
             fields.push(function(){});
-            return "(0\\d|[1-4]\\d|5[0-3])";
+            return "(0?\\d|[1-4]\\d|5[0-3])";
           case "%u": // iso weekday [1,7]
             fields.push(function (x,d) { d.isoday = Number(x); });
             return '([1-7])';
@@ -252,7 +255,7 @@ pv.Format.date = function(pattern) {
             return '([0-6])';
           case '%W': // TODO %W: week number [00,53]
             fields.push(function(){});
-            return "(0\\d|[1-4]\\d|5[0-3])";
+            return "(0?\\d|[1-4]\\d|5[0-3])";
           case '%y': // [00,99]
             fields.push(function(x,d) {
               x = Number(x);
