@@ -28,6 +28,6 @@ var crimea = [
 ];
 
 (function() {
-  var format = pv.Format.date("%m/%y");
+  var format = pv.Format.date("%m/%Y");
   crimea.forEach(function(d) { d.date = format.parse(d.date); });
 })();
